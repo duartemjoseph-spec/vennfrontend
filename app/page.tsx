@@ -1,29 +1,36 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import Modal from "@/components/Modal";
 
 export default function Home() {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+
+  function openLoginModal() {
+    setAuthMode("login");
+    setIsAuthOpen(true);
+  }
 
   function handleFakeLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setIsAuthOpen(false);
+    window.location.href = "/rooms";
+  }
 
-    // front-end only for now
-    setIsLoginOpen(false);
+  function handleFakeSignup(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsAuthOpen(false);
     window.location.href = "/rooms";
   }
 
   return (
     <div className="min-h-screen bg-zinc-100 relative overflow-hidden">
-      {/* soft background shapes */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="h-72 w-72 rounded-full bg-purple-300/30 blur-3xl absolute -translate-x-24 -translate-y-10" />
         <div className="h-72 w-72 rounded-full bg-cyan-300/30 blur-3xl absolute translate-x-24 translate-y-10" />
       </div>
 
-      {/* top bar */}
       <header className="relative z-10 flex items-center justify-between px-8 py-6">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-purple-500" />
@@ -31,7 +38,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* hero */}
       <main className="relative z-10 flex items-center justify-center px-6">
         <section className="w-full max-w-4xl rounded-3xl border border-zinc-200 bg-white/90 backdrop-blur p-12 md:p-16 text-center shadow-sm">
           <div className="mx-auto mb-6 h-12 w-12 rounded-2xl bg-purple-500" />
@@ -46,7 +52,7 @@ export default function Home() {
           </p>
 
           <button
-            onClick={() => setIsLoginOpen(true)}
+            onClick={openLoginModal}
             className="inline-flex items-center justify-center rounded-xl bg-purple-500 px-6 py-3 text-white font-semibold hover:bg-purple-600 transition"
           >
             Get Started
@@ -66,59 +72,158 @@ export default function Home() {
         </section>
       </main>
 
-      <Modal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)}>
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-zinc-900">Log In</h2>
-          <p className="mt-2 text-sm text-zinc-600">
-            Welcome back. Sign in to start planning with Venn.
-          </p>
-        </div>
+      <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
+        {authMode === "login" ? (
+          <>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-zinc-900">Log In</h2>
+              <p className="mt-2 text-sm text-zinc-600">
+                Welcome back. Sign in to start planning with Venn.
+              </p>
+            </div>
 
-        <form onSubmit={handleFakeLogin} className="space-y-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-medium text-zinc-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-zinc-300 px-4 py-3 outline-none focus:border-purple-500"
-            />
-          </div>
+            <form onSubmit={handleFakeLogin} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="login-email"
+                  className="mb-2 block text-sm font-medium text-zinc-700"
+                >
+                  Email
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
+                />
+              </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-zinc-700"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              className="w-full rounded-xl border border-zinc-300 px-4 py-3 outline-none focus:border-purple-500"
-            />
-          </div>
+              <div>
+                <label
+                  htmlFor="login-password"
+                  className="mb-2 block text-sm font-medium text-zinc-700"
+                >
+                  Password
+                </label>
+                <input
+                  id="login-password"
+                  type="password"
+                  placeholder="Enter your password"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
+                />
+              </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition"
-          >
-            Sign In
-          </button>
-        </form>
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition"
+              >
+                Sign In
+              </button>
+            </form>
 
-        <p className="mt-4 text-center text-sm text-zinc-500">
-          Don’t have an account yet?{" "}
-          <button className="font-medium text-purple-600 hover:text-purple-700">
-            Create one
-          </button>
-        </p>
+            <p className="mt-4 text-center text-sm text-zinc-500">
+              Don&apos;t have an account yet?{" "}
+              <button
+                type="button"
+                onClick={() => setAuthMode("signup")}
+                className="font-medium text-purple-600 hover:text-purple-700"
+              >
+                Create one
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-zinc-900">
+                Create an account
+              </h2>
+              <p className="mt-2 text-sm text-zinc-600">
+                Join Venn and start planning with your group.
+              </p>
+            </div>
+
+            <form onSubmit={handleFakeSignup} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="signup-name"
+                  className="mb-2 block text-sm font-medium text-zinc-700"
+                >
+                  Name
+                </label>
+                <input
+                  id="signup-name"
+                  type="text"
+                  placeholder="Your name"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="signup-username"
+                  className="mb-2 block text-sm font-medium text-zinc-700"
+                >
+                  Username
+                </label>
+                <input
+                  id="signup-username"
+                  type="text"
+                  placeholder="Choose a username"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="signup-email"
+                  className="mb-2 block text-sm font-medium text-zinc-700"
+                >
+                  Email
+                </label>
+                <input
+                  id="signup-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="signup-password"
+                  className="mb-2 block text-sm font-medium text-zinc-700"
+                >
+                  Password
+                </label>
+                <input
+                  id="signup-password"
+                  type="password"
+                  placeholder="Create a password"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition"
+              >
+                Sign Up
+              </button>
+            </form>
+
+            <p className="mt-4 text-center text-sm text-zinc-500">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setAuthMode("login")}
+                className="font-medium text-purple-600 hover:text-purple-700"
+              >
+                Log in
+              </button>
+            </p>
+          </>
+        )}
       </Modal>
     </div>
   );

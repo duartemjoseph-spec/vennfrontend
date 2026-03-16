@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const rooms = [
@@ -7,6 +10,12 @@ const rooms = [
 ];
 
 export default function Sidebar() {
+  const router = useRouter();
+
+  function handleLogout() {
+    router.push("/");
+  }
+
   return (
     <aside className="w-72 rounded-3xl bg-white border border-zinc-200 p-5 shadow-sm">
       <div className="mb-6">
@@ -24,14 +33,14 @@ export default function Sidebar() {
 
         <Link
           className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          href="/schedule"
+          href="/rooms/schedule"
         >
           🗓️ My Schedule
         </Link>
 
         <Link
           className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          href="/friends"
+          href="/rooms/friends"
         >
           👥 Friends
         </Link>
@@ -66,7 +75,10 @@ export default function Sidebar() {
       <div className="my-5 h-px bg-zinc-200" />
 
       <div className="space-y-2 text-sm">
-        <button className="w-full text-left rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100">
+        <button
+          onClick={handleLogout}
+          className="w-full text-left rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+        >
           🚪 Log Out
         </button>
 

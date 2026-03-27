@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5197";
+const API_BASE = "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
 
 export async function createUser(
   username: string,
@@ -34,12 +34,13 @@ export async function loginUser(username: string, password: string) {
     },
     body: JSON.stringify({
       username,
-      password,
+      password
     }),
   });
 
   const data = await res.json();
-
+  console.log(await data);
+  console.log(res.ok)
   if (!res.ok) {
     throw new Error(data.Message || "Login failed.");
   }

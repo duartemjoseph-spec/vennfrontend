@@ -39,13 +39,14 @@ export default function Home() {
     setIsLoading(true);
 
     try {
+      console.log(loginUsername + " : " + loginPassword)
       const data = await loginUser(loginUsername, loginPassword);
-
-      if (!data.Token) {
+      console.log(data)
+      if (!data) {
         throw new Error("No token returned from backend.");
       }
 
-      saveToken(data.Token);
+      saveToken(data);
       saveUsername(loginUsername);
 
       setSuccessMessage("Login successful.");

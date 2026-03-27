@@ -2,26 +2,91 @@
 
 import { useState } from "react";
 import Modal from "@/components/Modal";
+import { createUser, loginUser, saveToken, saveUsername } from "@/lib/api";
 
 export default function Home() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
 
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  const [signupUsername, setSignupUsername] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   function openLoginModal() {
     setAuthMode("login");
+    setErrorMessage("");
+    setSuccessMessage("");
     setIsAuthOpen(true);
   }
 
-  function handleFakeLogin(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function closeModal() {
     setIsAuthOpen(false);
-    window.location.href = "/rooms";
+    setErrorMessage("");
+    setSuccessMessage("");
   }
 
-  function handleFakeSignup(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsAuthOpen(false);
-    window.location.href = "/rooms";
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsLoading(true);
+
+    try {
+      const data = await loginUser(loginUsername, loginPassword);
+
+      if (!data.Token) {
+        throw new Error("No token returned from backend.");
+      }
+
+      saveToken(data.Token);
+      saveUsername(loginUsername);
+
+      setSuccessMessage("Login successful.");
+      setIsAuthOpen(false);
+      window.location.href = "/rooms";
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Login failed.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsLoading(true);
+
+    try {
+      await createUser(signupUsername, signupEmail, signupPassword);
+
+      setSuccessMessage("Account created. You can log in now.");
+      setAuthMode("login");
+      setLoginUsername(signupUsername);
+
+      setSignupUsername("");
+      setSignupEmail("");
+      setSignupPassword("");
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Signup failed.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -43,7 +108,7 @@ export default function Home() {
           <div className="mx-auto mb-6 h-12 w-12 rounded-2xl bg-purple-500" />
 
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">
-            See when everyone’s free.
+            See when everyone&apos;s free.
           </h1>
 
           <p className="mx-auto max-w-2xl text-lg text-zinc-600 mb-8">
@@ -72,7 +137,7 @@ export default function Home() {
         </section>
       </main>
 
-      <Modal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)}>
+      <Modal isOpen={isAuthOpen} onClose={closeModal}>
         {authMode === "login" ? (
           <>
             <div className="mb-6">
@@ -82,18 +147,32 @@ export default function Home() {
               </p>
             </div>
 
-            <form onSubmit={handleFakeLogin} className="space-y-4">
+            {errorMessage && (
+              <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {errorMessage}
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                {successMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label
-                  htmlFor="login-email"
+                  htmlFor="login-username"
                   className="mb-2 block text-sm font-medium text-zinc-700"
                 >
-                  Email
+                  Username
                 </label>
                 <input
-                  id="login-email"
-                  type="email"
-                  placeholder="you@example.com"
+                  id="login-username"
+                  type="text"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  placeholder="Enter your username"
                   className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
                 />
               </div>
@@ -108,6 +187,8 @@ export default function Home() {
                 <input
                   id="login-password"
                   type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="Enter your password"
                   className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
                 />
@@ -115,9 +196,10 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition"
+                disabled={isLoading}
+                className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition disabled:opacity-60"
               >
-                Sign In
+                {isLoading ? "Signing In..." : "Sign In"}
               </button>
             </form>
 
@@ -125,7 +207,11 @@ export default function Home() {
               Don&apos;t have an account yet?{" "}
               <button
                 type="button"
-                onClick={() => setAuthMode("signup")}
+                onClick={() => {
+                  setAuthMode("signup");
+                  setErrorMessage("");
+                  setSuccessMessage("");
+                }}
                 className="font-medium text-purple-600 hover:text-purple-700"
               >
                 Create one
@@ -143,22 +229,19 @@ export default function Home() {
               </p>
             </div>
 
-            <form onSubmit={handleFakeSignup} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="signup-name"
-                  className="mb-2 block text-sm font-medium text-zinc-700"
-                >
-                  Name
-                </label>
-                <input
-                  id="signup-name"
-                  type="text"
-                  placeholder="Your name"
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
-                />
+            {errorMessage && (
+              <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {errorMessage}
               </div>
+            )}
 
+            {successMessage && (
+              <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                {successMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleSignup} className="space-y-4">
               <div>
                 <label
                   htmlFor="signup-username"
@@ -169,6 +252,8 @@ export default function Home() {
                 <input
                   id="signup-username"
                   type="text"
+                  value={signupUsername}
+                  onChange={(e) => setSignupUsername(e.target.value)}
                   placeholder="Choose a username"
                   className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
                 />
@@ -184,6 +269,8 @@ export default function Home() {
                 <input
                   id="signup-email"
                   type="email"
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
                   placeholder="you@example.com"
                   className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
                 />
@@ -199,6 +286,8 @@ export default function Home() {
                 <input
                   id="signup-password"
                   type="password"
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
                   placeholder="Create a password"
                   className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-purple-500"
                 />
@@ -206,9 +295,10 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition"
+                disabled={isLoading}
+                className="w-full rounded-xl bg-purple-500 px-4 py-3 font-semibold text-white hover:bg-purple-600 transition disabled:opacity-60"
               >
-                Sign Up
+                {isLoading ? "Creating Account..." : "Sign Up"}
               </button>
             </form>
 
@@ -216,7 +306,11 @@ export default function Home() {
               Already have an account?{" "}
               <button
                 type="button"
-                onClick={() => setAuthMode("login")}
+                onClick={() => {
+                  setAuthMode("login");
+                  setErrorMessage("");
+                  setSuccessMessage("");
+                }}
                 className="font-medium text-purple-600 hover:text-purple-700"
               >
                 Log in

@@ -1,14 +1,37 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  Home,
+  CalendarDays,
+  Users,
+  Settings,
+  LogOut,
+  Plus,
+  BookOpen,
+  Gamepad2,
+  Pizza,
+} from "lucide-react";
+import { clearToken, clearUsername } from "@/lib/api";
 
 const rooms = [
-  { id: "study", name: "Study Session", icon: "📚" },
-  { id: "game", name: "Game Night", icon: "🎮" },
-  { id: "dinner", name: "Dinner Plans", icon: "🍕" },
+  { id: "study", name: "Study Session", icon: BookOpen },
+  { id: "game", name: "Game Night", icon: Gamepad2 },
+  { id: "dinner", name: "Dinner Plans", icon: Pizza },
 ];
 
 export default function Sidebar() {
+  const router = useRouter();
+
+  function handleLogout() {
+    clearToken();
+    clearUsername();
+    router.push("/");
+  }
+
   return (
-    <aside className="w-72 rounded-3xl bg-white border border-zinc-200 p-5 shadow-sm">
+    <aside className="w-72 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
       <div className="mb-6">
         <div className="text-xl font-bold text-zinc-900">Venn</div>
         <div className="text-sm text-zinc-600">Find overlap fast</div>
@@ -16,24 +39,27 @@ export default function Sidebar() {
 
       <nav className="space-y-2">
         <Link
-          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
           href="/rooms"
         >
-          🏠 Rooms
+          <Home size={18} />
+          <span>Rooms</span>
         </Link>
 
         <Link
-          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          href="/schedule"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          href="/rooms/schedule"
         >
-          🗓️ My Schedule
+          <CalendarDays size={18} />
+          <span>My Schedule</span>
         </Link>
 
         <Link
-          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          href="/friends"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          href="/rooms/friends"
         >
-          👥 Friends
+          <Users size={18} />
+          <span>Friends</span>
         </Link>
       </nav>
 
@@ -42,39 +68,49 @@ export default function Sidebar() {
       <div className="mb-2 text-sm font-semibold text-zinc-700">My Rooms</div>
 
       <div className="space-y-1">
-        {rooms.map((room) => (
-          <Link
-            key={room.id}
-            href={`/rooms/${room.id}`}
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          >
-            <span>{room.icon}</span>
-            <span className="text-sm">{room.name}</span>
-          </Link>
-        ))}
+        {rooms.map((room) => {
+          const RoomIcon = room.icon;
+
+          return (
+            <Link
+              key={room.id}
+              href={`/rooms/${room.id}`}
+              className="flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+            >
+              <RoomIcon size={16} />
+              <span className="text-sm">{room.name}</span>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="mt-6">
         <Link
-          className="block rounded-xl px-3 py-2 font-medium text-purple-600 hover:bg-purple-50"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 font-medium text-purple-600 hover:bg-purple-50"
           href="/rooms/new"
         >
-          ➕ New Room
+          <Plus size={18} />
+          <span>New Room</span>
         </Link>
       </div>
 
       <div className="my-5 h-px bg-zinc-200" />
 
       <div className="space-y-2 text-sm">
-        <button className="w-full text-left rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100">
-          🚪 Log Out
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+        >
+          <LogOut size={18} />
+          <span>Log Out</span>
         </button>
 
         <Link
-          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          href="/settings"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          href="/rooms/settings"
         >
-          ⚙️ Settings
+          <Settings size={18} />
+          <span>Settings</span>
         </Link>
       </div>
     </aside>

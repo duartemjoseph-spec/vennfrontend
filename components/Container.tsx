@@ -1,6 +1,6 @@
 import Sidebar from "./Sidebar";
 
-export default function PageShell({
+export default function Container({
   children,
 }: {
   children: React.ReactNode;

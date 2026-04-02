@@ -115,13 +115,13 @@ function getStatusColor(status: string) {
 }
 
 export default function FriendsPage() {
-  // // Add Friend modal state
+  //  Add Friend modal state
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
 
   return (
     <Container>
       <div className="mx-auto max-w-5xl">
-        {/* // Page header */}
+        {/*  Page header */}
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold text-zinc-900">Friends</h1>
           <p className="mt-1 text-sm text-zinc-500">
@@ -129,7 +129,7 @@ export default function FriendsPage() {
           </p>
         </div>
 
-        {/* // Top stat cards */}
+        {/*  Top stat cards */}
         <div className="mb-4 grid gap-4 md:grid-cols-3">
           {friendStats.map((stat) => (
             <div
@@ -142,7 +142,7 @@ export default function FriendsPage() {
           ))}
         </div>
 
-        {/* // Search row */}
+        {/*  Search row */}
         <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm sm:flex-row">
           <div className="relative flex-1">
             <Search
@@ -165,7 +165,7 @@ export default function FriendsPage() {
           </button>
         </div>
 
-        {/* // Filter tabs */}
+        {/*  Filter tabs */}
         <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl border border-zinc-200 bg-white p-2 shadow-sm md:grid-cols-4">
           {friendTabs.map((tab, index) => (
             <button
@@ -185,7 +185,7 @@ export default function FriendsPage() {
           ))}
         </div>
 
-        {/* // Friend cards */}
+        {/*  Friend cards */}
         <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {friends.map((friend) => (
             <div
@@ -240,7 +240,7 @@ export default function FriendsPage() {
           ))}
         </div>
 
-        {/* // Bottom invite banner */}
+        {/*  Bottom invite banner */}
         <div className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 px-5 py-5 text-white shadow-sm sm:flex-row sm:items-center">
           <div>
             <h3 className="text-lg font-semibold">Invite More Friends</h3>
@@ -256,7 +256,7 @@ export default function FriendsPage() {
         </div>
       </div>
 
-      {/* // Add Friend modal */}
+      {/*  Add Friend modal */}
       <AddFriendModal
         isOpen={isAddFriendOpen}
         onClose={() => setIsAddFriendOpen(false)}

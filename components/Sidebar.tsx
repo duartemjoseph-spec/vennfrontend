@@ -12,8 +12,9 @@ import {
   BookOpen,
   Gamepad2,
   Pizza,
+  UserRound,
 } from "lucide-react";
-import { clearToken, clearUsername } from "@/lib/api";
+import { clearToken, clearUsername, clearUserId } from "@/lib/api";
 
 const rooms = [
   { id: "study", name: "Study Session", icon: BookOpen },
@@ -27,6 +28,7 @@ export default function Sidebar() {
   function handleLogout() {
     clearToken();
     clearUsername();
+    clearUserId();
     router.push("/");
   }
 
@@ -97,6 +99,14 @@ export default function Sidebar() {
       <div className="my-5 h-px bg-zinc-200" />
 
       <div className="space-y-2 text-sm">
+        <Link
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          href="/rooms/profile"
+        >
+          <UserRound size={18} />
+          <span>Profile</span>
+        </Link>
+
         <button
           onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"

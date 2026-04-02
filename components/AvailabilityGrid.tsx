@@ -45,7 +45,7 @@ function getTimeSlots(period: "AM" | "PM") {
 export default function AvailabilityGrid({ period }: AvailabilityGridProps) {
   const timeSlots = useMemo(() => getTimeSlots(period), [period]);
   const [selectedCells, setSelectedCells] = useState<Record<string, boolean>>(
-    {}
+    {},
   );
 
   function toggleCell(day: string, time: string) {

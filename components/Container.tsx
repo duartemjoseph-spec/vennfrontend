@@ -1,10 +1,6 @@
 import Sidebar from "./Sidebar";
 
-export default function Container({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Container({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-100">
       <div className="mx-auto flex max-w-7xl gap-6 px-6 py-6">

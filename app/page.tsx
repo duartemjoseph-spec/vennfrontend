@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import Modal from "@/components/Modal";
-import { createUser, loginUser, saveToken, saveUsername } from "@/lib/api";
+import {
+  createUser,
+  getUserByUsername,
+  loginUser,
+  saveToken,
+  saveUserId,
+  saveUsername,
+} from "@/lib/api";
 
 export default function Home() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -39,15 +46,17 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      console.log(loginUsername + " : " + loginPassword)
       const data = await loginUser(loginUsername, loginPassword);
-      console.log(data)
-      if (!data) {
+
+      if (!data.Token) {
         throw new Error("No token returned from backend.");
       }
 
-      saveToken(data);
+      saveToken(data.Token);
       saveUsername(loginUsername);
+
+      const userInfo = await getUserByUsername(loginUsername);
+      saveUserId(userInfo.id);
 
       setSuccessMessage("Login successful.");
       setIsAuthOpen(false);

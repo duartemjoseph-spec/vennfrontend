@@ -135,9 +135,7 @@ export default function AddFriendModal({
 
       {/* // Footer actions */}
       <div className="mt-6 flex items-center justify-between gap-3">
-        <p className="text-sm text-zinc-500">
-          {selectedIds.length} selected
-        </p>
+        <p className="text-sm text-zinc-500">{selectedIds.length} selected</p>
 
         <div className="flex gap-3">
           <button

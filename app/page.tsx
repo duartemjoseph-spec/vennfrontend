@@ -40,37 +40,37 @@ export default function Home() {
   }
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
-    setIsLoading(true);
+  e.preventDefault();
+  setErrorMessage("");
+  setSuccessMessage("");
+  setIsLoading(true);
 
-    try {
-      const data = await loginUser(loginUsername, loginPassword);
+  try {
+    const data = await loginUser(loginUsername, loginPassword);
 
-      if (!data.token) {
-        throw new Error("No token returned from backend.");
-      }
-
-      saveToken(data.token);
-      saveUsername(loginUsername);
-
-      const userInfo = await getUserByUsername(loginUsername);
-      saveUserId(userInfo.id);
-
-      setSuccessMessage("Login successful.");
-      setIsAuthOpen(false);
-      window.location.href = "/rooms";
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Login failed.");
-      }
-    } finally {
-      setIsLoading(false);
+    if (!data.token) {
+      throw new Error("No token returned from backend.");
     }
+
+    saveToken(data.token);
+    saveUsername(loginUsername);
+
+    const userInfo = await getUserByUsername(loginUsername);
+    saveUserId(userInfo.userId);
+
+    setSuccessMessage("Login successful.");
+    setIsAuthOpen(false);
+    window.location.href = "/rooms";
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(error.message);
+    } else {
+      setErrorMessage("Login failed.");
+    }
+  } finally {
+    setIsLoading(false);
   }
+}
 
   async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

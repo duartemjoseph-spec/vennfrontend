@@ -48,11 +48,11 @@ export default function Home() {
     try {
       const data = await loginUser(loginUsername, loginPassword);
 
-      if (!data.Token) {
+      if (!data.token) {
         throw new Error("No token returned from backend.");
       }
 
-      saveToken(data.Token);
+      saveToken(data.token);
       saveUsername(loginUsername);
 
       const userInfo = await getUserByUsername(loginUsername);

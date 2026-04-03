@@ -19,7 +19,6 @@ type ProfileData = {
 };
 
 export default function ProfilePage() {
-  //  Page state
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -37,7 +36,18 @@ export default function ProfilePage() {
         }
 
         const data = await getProfileByUserId(Number(savedUserId), token);
-        setProfile(data);
+
+        if (!data) {
+          setProfile({
+            username: getUsername() || "User",
+            email: "",
+            description: "",
+            userIcon: "",
+            banner: "",
+          });
+        } else {
+          setProfile(data);
+        }
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(error.message);
@@ -87,7 +97,7 @@ export default function ProfilePage() {
 
         {/*  Main profile card */}
         <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
-          {/* Banner */}
+          {/*  Banner */}
           <div
             className="h-28 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400"
             style={
@@ -202,19 +212,6 @@ export default function ProfilePage() {
                 <CalendarDays size={16} className="text-zinc-400" />
                 <span>March 2026</span>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-zinc-50 p-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  Account Type
-                </p>
-                <p className="mt-2 text-zinc-700">Free Plan</p>
-              </div>
-
-              <button className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100">
-                Upgrade
-              </button>
             </div>
           </div>
         </div>

@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import { Mail, UserRound, Pencil, CalendarDays } from "lucide-react";
-import { getProfileByUserId, getToken, getUserId, getUsername } from "@/lib/api";
+import {
+  getProfileByUserId,
+  getToken,
+  getUserId,
+  getUsername,
+} from "@/lib/api";
 
 type ProfileData = {
   username: string;
@@ -113,14 +118,13 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="pb-1">
-                  <p className="text-xs text-zinc-500">Logged in as</p>
-                  <p className="font-semibold text-zinc-900">
+                  <p className="text-lg font-semibold text-zinc-900">
                     {profile?.username || getUsername() || "User"}
                   </p>
                 </div>
               </div>
 
-              <button className="flex items-center gap-2 rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
+              <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">
                 <Pencil size={16} />
                 Edit Profile
               </button>
@@ -161,7 +165,9 @@ export default function ProfilePage() {
 
         {/*  Stats row */}
         <div className="mt-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900">Your Stats</h2>
+          <h2 className="mb-4 text-lg font-semibold text-zinc-900">
+            Your Stats
+          </h2>
 
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-2xl bg-zinc-50 p-5 text-center">

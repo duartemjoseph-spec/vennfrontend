@@ -1,7 +1,7 @@
 const API_BASE =
   "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
 
-// Create account
+// user routes
 export async function createUser(
   username: string,
   email: string,
@@ -29,7 +29,6 @@ export async function createUser(
   return data;
 }
 
-// Login
 export async function loginUser(username: string, password: string) {
   const res = await fetch(`${API_BASE}/User/Login`, {
     method: "POST",
@@ -52,7 +51,6 @@ export async function loginUser(username: string, password: string) {
   return data;
 }
 
-// Get user by username
 export async function getUserByUsername(username: string) {
   const res = await fetch(`${API_BASE}/User/GetUserByUsername/${username}`, {
     cache: "no-store",
@@ -62,77 +60,105 @@ export async function getUserByUsername(username: string) {
   const data = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    throw new Error(data?.message || data?.Message || "Could not load user info.");
+    throw new Error(data?.message || data?.Message || "Could not load user.");
   }
 
   return data;
 }
 
-// Get profile by user id
-export async function getProfileByUserId(userId: number, token: string) {
-  const res = await fetch(`${API_BASE}/Profile/GetProfileByUserId/${userId}`, {
+// room routes
+export async function getAllRooms(token?: string) {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/Room/GetAllRooms`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     cache: "no-store",
   });
 
   const text = await res.text();
+  const data = text ? JSON.parse(text) : [];
 
   if (!res.ok) {
-    throw new Error(text || "Could not load profile.");
+    throw new Error("Could not load rooms.");
   }
 
-  if (!text) {
-    return null;
-  }
-
-  return JSON.parse(text);
+  return data;
 }
 
-// Save token
+export async function createRoom(
+  roomData: {
+    title: string;
+    category: string;
+    eventDate: string;
+    isRoomActive: boolean;
+    userId: number;
+  },
+  token?: string
+) {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/Room/CreateRoom`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(roomData),
+  });
+
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!res.ok) {
+    throw new Error(data?.message || data?.Message || "Could not create room.");
+  }
+
+  return data;
+}
+
+// local storage helpers
 export function saveToken(token: string) {
   localStorage.setItem("vennToken", token);
 }
 
-// Get token
 export function getToken() {
   return localStorage.getItem("vennToken");
 }
 
-// Clear token
 export function clearToken() {
   localStorage.removeItem("vennToken");
 }
 
-// Save username
 export function saveUsername(username: string) {
   localStorage.setItem("vennUsername", username);
 }
 
-// Get username
 export function getUsername() {
   return localStorage.getItem("vennUsername");
 }
 
-// Clear username
 export function clearUsername() {
   localStorage.removeItem("vennUsername");
 }
 
-// Save user id
 export function saveUserId(userId: number) {
   localStorage.setItem("vennUserId", userId.toString());
 }
 
-// Get user id
 export function getUserId() {
   return localStorage.getItem("vennUserId");
 }
 
-// Clear user id
 export function clearUserId() {
   localStorage.removeItem("vennUserId");
 }

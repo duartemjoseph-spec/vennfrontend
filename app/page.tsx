@@ -47,7 +47,6 @@ export default function Home() {
 
     try {
       const data = await loginUser(loginUsername, loginPassword);
-
       const token = data?.token || data?.Token;
 
       if (!token) {
@@ -61,11 +60,9 @@ export default function Home() {
       const userId =
         userInfo?.userId || userInfo?.UserId || userInfo?.id || userInfo?.Id;
 
-      if (!userId) {
-        throw new Error("No user id returned from backend.");
+      if (userId) {
+        saveUserId(userId);
       }
-
-      saveUserId(userId);
 
       setSuccessMessage("Login successful.");
       setIsAuthOpen(false);
@@ -141,18 +138,6 @@ export default function Home() {
           >
             Get Started
           </button>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-zinc-600">
-            <span className="rounded-full bg-zinc-100 px-4 py-2">
-              Create a room
-            </span>
-            <span className="rounded-full bg-zinc-100 px-4 py-2">
-              Share availability
-            </span>
-            <span className="rounded-full bg-zinc-100 px-4 py-2">
-              Find overlap
-            </span>
-          </div>
         </section>
       </main>
 

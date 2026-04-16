@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, UserPlus, Check } from "lucide-react";
 import Modal from "@/components/Modal";
-import { getAllUsers, getUserId, sendFriendRequest } from "@/lib/api";
+import { getAllUsers, inviteMemberToRoom } from "@/lib/api";
 
-type AddFriendModalProps = {
+type InviteMemberModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onFriendAdded: () => void;
+  roomId: number;
+  existingMemberIds?: number[];
+  onMemberInvited: () => void;
 };
 
 type UserItem = {
@@ -18,18 +20,18 @@ type UserItem = {
   userIcon?: string;
 };
 
-export default function AddFriendModal({
+export default function InviteMemberModal({
   isOpen,
   onClose,
-  onFriendAdded,
-}: AddFriendModalProps) {
+  roomId,
+  existingMemberIds = [],
+  onMemberInvited,
+}: InviteMemberModalProps) {
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState<UserItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successId, setSuccessId] = useState<number | null>(null);
-
-  const currentUserId = Number(getUserId() || 0);
 
   useEffect(() => {
     async function loadUsers() {
@@ -59,23 +61,23 @@ export default function AddFriendModal({
       const id = user.userId || 0;
       const text = `${user.username || ""} ${user.email || ""}`.toLowerCase();
 
-      if (id === currentUserId) return false;
+      if (existingMemberIds.includes(id)) return false;
 
       return text.includes(searchValue.toLowerCase());
     });
-  }, [users, searchValue, currentUserId]);
+  }, [users, searchValue, existingMemberIds]);
 
-  async function handleAddFriend(receiverId: number) {
+  async function handleInvite(memberId: number) {
     try {
       setErrorMessage("");
-      await sendFriendRequest(currentUserId, receiverId);
-      setSuccessId(receiverId);
-      onFriendAdded();
+      await inviteMemberToRoom(roomId, memberId);
+      setSuccessId(memberId);
+      onMemberInvited();
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage("Could not send friend request.");
+        setErrorMessage("Could not invite member.");
       }
     }
   }
@@ -90,9 +92,9 @@ export default function AddFriendModal({
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-zinc-900">Add Friend</h2>
+        <h2 className="text-2xl font-bold text-zinc-900">Invite Member</h2>
         <p className="mt-2 text-sm text-zinc-600">
-          Search for users and send a friend request.
+          Search for a user and invite them to this room.
         </p>
       </div>
 
@@ -127,7 +129,7 @@ export default function AddFriendModal({
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user) => {
               const id = user.userId || 0;
-              const sent = successId === id;
+              const invited = successId === id;
 
               return (
                 <div
@@ -151,21 +153,21 @@ export default function AddFriendModal({
 
                   <button
                     type="button"
-                    onClick={() => handleAddFriend(id)}
+                    onClick={() => handleInvite(id)}
                     className={[
                       "flex h-10 min-w-24 items-center justify-center rounded-xl px-3 text-sm font-medium transition",
-                      sent
+                      invited
                         ? "bg-green-500 text-white"
                         : "bg-purple-500 text-white hover:bg-purple-600",
                     ].join(" ")}
                   >
-                    {sent ? (
+                    {invited ? (
                       <span className="flex items-center gap-1">
                         <Check size={16} />
-                        Sent
+                        Invited
                       </span>
                     ) : (
-                      "Add"
+                      "Invite"
                     )}
                   </button>
                 </div>

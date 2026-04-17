@@ -1,15 +1,25 @@
 'use client'
 import Container from '@/components/Container'
-import { Button, ToggleSwitch } from 'flowbite-react'
-import { Bell, CircleQuestionMark, Globe, Lock, Moon, Shield } from 'lucide-react'
+import { Button, Dropdown, DropdownItem, ToggleSwitch } from 'flowbite-react'
+import { Bell, Check, ChevronDown, CircleQuestionMark, Globe, Lock, Moon, Shield } from 'lucide-react'
+import { Span } from 'next/dist/trace'
 import React, { useState } from 'react'
 
 const page = () => {
 
   const [boolNotification, setBoolNotification] = useState(true);
+  const [boolEmailNotification, setBoolEmailNotification] = useState(false);
+  const [boolSoundNotification, setBoolSoundNotification] = useState(false);
 
   const handleNotification = () => {
     setBoolNotification(!boolNotification);
+  }
+  const handleEmailNotification = () => {
+    setBoolEmailNotification(!boolEmailNotification);
+  }
+
+  const handleSoundNotification = () => {
+    setBoolSoundNotification(!boolSoundNotification);
   }
 
 
@@ -39,7 +49,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='dark' checked={true} onChange={handleNotification} ></ToggleSwitch>
+                <ToggleSwitch color='' checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
               </div>
             </div>
             <hr className='pt-5 mt-5' />
@@ -51,7 +61,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='dark' checked={true} onChange={handleNotification} ></ToggleSwitch>
+                <ToggleSwitch color='dark' checked={boolEmailNotification} onChange={handleEmailNotification} ></ToggleSwitch>
               </div>
             </div>
 
@@ -64,7 +74,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='dark' checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
+                <ToggleSwitch color='dark' checked={boolSoundNotification} onChange={handleSoundNotification} ></ToggleSwitch>
               </div>
             </div>
           </div>
@@ -100,8 +110,45 @@ const page = () => {
           <hr className='pt-5 mt-5' />
 
           <div>
-            <h2 className='text-lg text-zinc-900 font-semibold'>Language</h2>
-            {/* insert toggle  */}
+            <h2 className='text-lg text-zinc-900 font-semibold pb-3'>Language</h2>
+            {/* Add ternary to dropdown to indicate selected Item  */}
+            <Dropdown className='text-black rounded-xl' label="" renderTrigger={() =>
+            (
+              <div className='p-4 py-3 border shadow-black rounded-lg hover:bg-gray-300 flex justify-between gap-3'>
+                <h2 className='text-gray-800 font-semibold'>English</h2>
+                <ChevronDown size={20} color='black' />
+              </div>
+            )
+            } inline>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                <div className='flex flex-row justify-between w-full '>
+                  {/* This will display what language is currently toggled! */}
+                  <p>English</p>
+                  <Check className='' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Spanish */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Spanish</p>
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Francis */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Francis</p>
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Deutsch */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Deutsch</p>
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+            </Dropdown>
           </div>
 
         </div>
@@ -119,11 +166,48 @@ const page = () => {
               <p className='text-zinc-500'>Configure timezone and regional settings</p>
             </div>
           </div>
-        <hr className='pt-5 mt-5' />
+          <hr className='pt-5 mt-5' />
 
           <div>
             <h2 className='text-lg text-zinc-900 font-semibold'>Timezone</h2>
             {/* insert toggle  */}
+            <Dropdown className='text-black rounded-xl' label="" renderTrigger={() =>
+            (
+              <div className='p-4 py-3 border shadow-black rounded-lg hover:bg-gray-300 flex justify-between gap-3'>
+                <h2 className='text-gray-800 font-semibold'>Pacific Time (PST)</h2>
+                <ChevronDown size={20} color='black' />
+              </div>
+            )
+            } inline>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Pacific Time (PST) */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Pacific Time (PST)</p>
+                  <Check className='' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Mountain Time (MST) */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Mountain Time (MST)</p>
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Central Time (CST) */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Central Time (CST)</p>
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+              <DropdownItem className='hover:bg-gray-300 rounded-xl'>
+                {/* Eastern Time (EST) */}
+                <div className='flex flex-row justify-between w-full '>
+                  <p>Eastern Time (EST)</p>
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                </div>
+              </DropdownItem>
+            </Dropdown>
 
           </div>
 

@@ -67,7 +67,7 @@ export default function Sidebar() {
 
         <Link
           className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
-          href="/rooms/settingsroom"
+          href="/rooms/settings"
         >
           Settings
         </Link>

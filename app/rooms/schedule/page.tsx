@@ -122,8 +122,8 @@ export default function SchedulePage() {
           let state: SlotState = "empty";
 
           if (item.status === 0) state = "busy";
-          if (item.status === 1) state = "maybe";
-          if (item.status === 2) state = "available";
+          if (item.status === 1) state = "available";
+          if (item.status === 2) state = "maybe";
 
           loadedSlots[`${dayLabel}-${timeLabel}`] = state;
         });

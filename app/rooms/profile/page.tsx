@@ -9,12 +9,17 @@ type UserData = {
   userId?: number;
   username?: string;
   email?: string;
+  description?: string;
+  userIcon?: string
+  accountCreated: Date
 };
 
 export default function ProfilePage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [boolUserIcon, setBoolUserIcon] = useState<boolean>(user?.userIcon != null)
+  const [creationDate, setCreationDate] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadUser() {
@@ -30,6 +35,11 @@ export default function ProfilePage() {
 
         const data = await getUserByUsername(username);
         setUser(data);
+
+        if(data.userIcon != null) setBoolUserIcon(true); 
+
+        setCreationDate(data.accountCreated.toLocaleString('default', { month: 'long', year: "numeric" }))
+
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(error.message);
@@ -83,7 +93,9 @@ export default function ProfilePage() {
             <div className="-mt-10 mb-6 flex items-center justify-between">
               <div className="flex items-end gap-4">
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
-                  <UserRound size={32} className="text-zinc-500" />
+                  {
+                    boolUserIcon ? <img src={user?.userIcon} alt="User Icon!" /> :  <UserRound size={32} className="text-zinc-500" />
+                  }
                 </div>
 
                 <div className="pb-1">
@@ -123,7 +135,7 @@ export default function ProfilePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Bio
                 </p>
-                <p className="mt-1 text-zinc-700">No bio added yet.</p>
+                <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p>
               </div>
             </div>
           </div>
@@ -140,7 +152,7 @@ export default function ProfilePage() {
             </p>
             <div className="mt-2 flex items-center gap-2 text-zinc-700">
               <CalendarDays size={16} className="text-zinc-400" />
-              <span>March 2026</span>
+              <span>{`${creationDate}`}</span>
             </div>
           </div>
         </div>

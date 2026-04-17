@@ -10,6 +10,7 @@ const page = () => {
   const [boolNotification, setBoolNotification] = useState(true);
   const [boolEmailNotification, setBoolEmailNotification] = useState(false);
   const [boolSoundNotification, setBoolSoundNotification] = useState(false);
+  const [isDark, setIsDark] = useState(false)
 
   const handleNotification = () => {
     setBoolNotification(!boolNotification);
@@ -20,6 +21,10 @@ const page = () => {
 
   const handleSoundNotification = () => {
     setBoolSoundNotification(!boolSoundNotification);
+  }
+
+  const handleDark = () => {
+    setIsDark(!isDark);
   }
 
 
@@ -49,7 +54,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='' checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
+                <ToggleSwitch color='black' checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
               </div>
             </div>
             <hr className='pt-5 mt-5' />
@@ -102,7 +107,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='dark' checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
+                <ToggleSwitch color='dark' checked={isDark} onChange={handleDark} ></ToggleSwitch>
               </div>
             </div>
 
@@ -244,9 +249,6 @@ const page = () => {
           </div>
 
         </div>
-
-
-
       </Container>
     </>
   )

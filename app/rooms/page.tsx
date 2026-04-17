@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import CreateRoomModal from "@/components/CreateRoomModal";
 import { getAllRooms, getToken } from "@/lib/api";
-import { useSearchParams } from "next/navigation";
 
 type RoomData = {
   roomId: number;
@@ -20,8 +19,6 @@ export default function RoomsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isCreateRoomOpen, setIsCreateRoomOpen] = useState(false);
-
-  const searchParams = useSearchParams();
 
   async function loadRooms() {
     try {
@@ -47,10 +44,12 @@ export default function RoomsPage() {
   }, []);
 
   useEffect(() => {
-    if (searchParams.get("create") === "true") {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("create") === "true") {
       setIsCreateRoomOpen(true);
     }
-  }, [searchParams]);
+  }, []);
 
   function formatDate(dateString?: string) {
     if (!dateString) return "No date set";

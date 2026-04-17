@@ -169,7 +169,7 @@ const page = () => {
           <hr className='pt-5 mt-5' />
 
           <div>
-            <h2 className='text-lg text-zinc-900 font-semibold'>Timezone</h2>
+            <h2 className='text-lg text-zinc-900 font-semibold pb-3'>Timezone</h2>
             {/* insert toggle  */}
             <Dropdown className='text-black rounded-xl' label="" renderTrigger={() =>
             (

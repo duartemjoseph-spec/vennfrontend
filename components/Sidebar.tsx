@@ -15,7 +15,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-72 rounded-3xl bg-white border border-zinc-200 p-5 shadow-sm">
+    <aside className="w-72 rounded-3xl sticky top-0 max-h-screen bg-white border border-zinc-200 p-5 shadow-sm">
       <div className="mb-6">
         <div className="text-xl font-bold text-zinc-900">Venn</div>
         <div className="text-sm text-zinc-600">Find overlap fast</div>

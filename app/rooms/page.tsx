@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import CreateRoomModal from "@/components/CreateRoomModal";
-import { getAllRooms, getToken } from "@/lib/api";
+import { getAllRooms, getToken, getUserId } from "@/lib/api";
 
 type RoomData = {
   roomId: number;
@@ -26,7 +26,9 @@ export default function RoomsPage() {
       setIsLoading(true);
 
       const token = getToken();
-      const data = await getAllRooms(token || undefined);
+      let id = getUserId();
+      let userId = Number(id);
+      const data = await getAllRooms(userId,token || undefined);
       setRooms(data || []);
     } catch (error) {
       if (error instanceof Error) {

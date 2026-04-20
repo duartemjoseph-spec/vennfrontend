@@ -91,7 +91,7 @@ export async function getAllUsers() {
 }
 
 // Get all rooms
-export async function getAllRooms(token?: string) {
+export async function getAllRooms(id: number ,token?: string) {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -100,7 +100,7 @@ export async function getAllRooms(token?: string) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}/Room/GetAllRooms`, {
+  const res = await fetch(`${API_BASE}/Room/GetCreatedAndJoinedRoomsByUserId/${id}`, {
     method: "GET",
     headers,
     cache: "no-store",

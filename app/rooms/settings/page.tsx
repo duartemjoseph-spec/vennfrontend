@@ -1,8 +1,8 @@
 'use client'
 import Container from '@/components/Container'
-import { Button, Dropdown, DropdownItem, ToggleSwitch } from 'flowbite-react'
+import { Dropdown, DropdownItem, ToggleSwitch } from 'flowbite-react'
 import { Bell, Check, ChevronDown, CircleQuestionMark, Globe, Lock, Moon, Shield } from 'lucide-react'
-import { Span } from 'next/dist/trace'
+
 import React, { useState } from 'react'
 
 const page = () => {

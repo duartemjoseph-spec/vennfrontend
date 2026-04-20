@@ -19,7 +19,16 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [boolUserIcon, setBoolUserIcon] = useState<boolean>(user?.userIcon != null)
-  const [creationDate, setCreationDate] = useState<string | null>(null)
+  const [creationDate, setCreationDate] = useState<string>("")
+
+  const formatMonthYear = (date: string) => {
+
+    const d = new Date(date);
+    return d.toLocaleDateString("en-US", {
+      month: 'long',
+      year: "numeric"
+    })
+  }
 
   useEffect(() => {
     async function loadUser() {
@@ -38,7 +47,7 @@ export default function ProfilePage() {
 
         if(data.userIcon != null) setBoolUserIcon(true); 
 
-        setCreationDate(data.accountCreated.toLocaleString('default', { month: 'long', year: "numeric" }))
+        setCreationDate(data.accountCreated)
 
       } catch (error) {
         if (error instanceof Error) {
@@ -152,7 +161,7 @@ export default function ProfilePage() {
             </p>
             <div className="mt-2 flex items-center gap-2 text-zinc-700">
               <CalendarDays size={16} className="text-zinc-400" />
-              <span>{`${creationDate}`}</span>
+              <span>{`${formatMonthYear(creationDate)}`}</span>
             </div>
           </div>
         </div>

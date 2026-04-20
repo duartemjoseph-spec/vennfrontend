@@ -28,8 +28,11 @@ export default function AddFriendModal({
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successId, setSuccessId] = useState<number | null>(null);
+  const [currentUserId, setCurrentUserId] = useState(0);
 
-  const currentUserId = Number(getUserId() || 0);
+  useEffect(() => {
+    setCurrentUserId(Number(getUserId() || 0));
+  }, []);
 
   useEffect(() => {
     async function loadUsers() {
@@ -68,6 +71,11 @@ export default function AddFriendModal({
   async function handleAddFriend(receiverId: number) {
     try {
       setErrorMessage("");
+
+      if (!currentUserId) {
+        throw new Error("You need to log in first.");
+      }
+
       await sendFriendRequest(currentUserId, receiverId);
       setSuccessId(receiverId);
       onFriendAdded();

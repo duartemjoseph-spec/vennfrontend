@@ -52,20 +52,23 @@ export default function FriendsPage() {
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(0);
 
-  const currentUserId = Number(getUserId() || 0);
+  useEffect(() => {
+    setCurrentUserId(Number(getUserId() || 0));
+  }, []);
 
-  async function loadFriends() {
+  async function loadFriends(userId: number) {
     try {
       setIsLoading(true);
       setErrorMessage("");
 
-      if (!currentUserId) {
+      if (!userId) {
         throw new Error("You need to log in first.");
       }
 
-      const accepted = await getAcceptedFriends(currentUserId);
-      const pending = await getPendingFriends(currentUserId);
+      const accepted = await getAcceptedFriends(userId);
+      const pending = await getPendingFriends(userId);
 
       setAcceptedFriends(accepted || []);
       setPendingFriends(pending || []);
@@ -81,8 +84,12 @@ export default function FriendsPage() {
   }
 
   useEffect(() => {
-    loadFriends();
-  }, []);
+    if (currentUserId) {
+      loadFriends(currentUserId);
+    } else {
+      setIsLoading(false);
+    }
+  }, [currentUserId]);
 
   const filteredAccepted = useMemo(() => {
     return acceptedFriends.filter((friend) => {
@@ -96,7 +103,7 @@ export default function FriendsPage() {
   async function handleAcceptFriend(requesterId: number, receiverId: number) {
     try {
       await acceptFriendRequest(requesterId, receiverId);
-      loadFriends();
+      loadFriends(currentUserId);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -106,7 +113,6 @@ export default function FriendsPage() {
     }
   }
 
-  const onlineCount = acceptedFriends.length;
   const pendingCount = pendingFriends.length;
 
   return (
@@ -302,7 +308,7 @@ export default function FriendsPage() {
       <AddFriendModal
         isOpen={isAddFriendOpen}
         onClose={() => setIsAddFriendOpen(false)}
-        onFriendAdded={loadFriends}
+        onFriendAdded={() => loadFriends(currentUserId)}
       />
     </Container>
   );

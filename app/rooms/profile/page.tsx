@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import Container from "@/components/Container";
 import { Mail, UserRound, Pencil, CalendarDays, Divide } from "lucide-react";
-import { getToken, getUsername, getUserByUsername } from "@/lib/api";
+import { getToken, getUsername, UserProfile, updateUserProfileById, getUserId, getUserByUserId } from "@/lib/api";
 
 type UserData = {
   userId?: number;
@@ -17,12 +17,15 @@ type UserData = {
 export default function ProfilePage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");           // I might reuse this state for input errors!
   const [boolUserIcon, setBoolUserIcon] = useState<boolean>(user?.userIcon != null)
   const [creationDate, setCreationDate] = useState<string>("")
 
-  const [boolEditProfileMode, setBoolEditProfileMode] = useState(false);
-  
+  const [boolEditProfileMode, setBoolEditProfileMode] = useState<boolean>(false);
+  const [boolInputNameError, setBoolInputNameError] = useState(false)
+  const [boolInputEmailError, setBoolInputEmailError] = useState(false)
+  const [inputErrorMessage, setInputErrorMessage] = useState("")
+
   const [nameUpdate, setNameUpdate] = useState("")
   const [emailUpdate, setEmailUpdate] = useState("")
   const [bioUpdate, setBioUpdate] = useState("")
@@ -39,9 +42,11 @@ export default function ProfilePage() {
 
   const handleNameUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     setNameUpdate(e.target.value);
+    setBoolInputNameError(false);
   }
   const handleEmailUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     setEmailUpdate(e.target.value);
+    setBoolInputEmailError(false);
   }
   const handleBioUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     setBioUpdate(e.target.value);
@@ -49,9 +54,38 @@ export default function ProfilePage() {
 
   const handleProfileUpdate = async () => {
     // First validate user's inputted data: if name or email is empty! (create an boolInputError)
-    if(nameUpdate == "")
-    {
+    if (nameUpdate == "") {
+      setBoolInputNameError(true)
+      setInputErrorMessage("Please Input a Name before Saving Changes")
       // update new error bool and create error message below name input in a red border with red text!
+    }
+    else if (emailUpdate == "") {
+      setBoolInputEmailError(true)
+      setInputErrorMessage("Please Input a valid Email before Saving Changes")
+    }
+    else {
+      // lets update our profile!
+      console.log("Updating profile NOW!!!")
+    
+      const updateUser : UserProfile = {
+        username : nameUpdate,
+        email : emailUpdate,
+        description : bioUpdate,
+        userIcon : user?.userIcon,
+        banner : null,
+      }
+      console.log(updateUser)
+
+      const updateResponse = await updateUserProfileById(user?.userId! ,updateUser, )
+      if(updateResponse != null){
+        setUser(updateResponse);
+        setBoolEditProfileMode(false);
+      }
+      else{
+        setBoolInputNameError(true);
+        setInputErrorMessage("Error: Unable to Update your Profile! Profile may already be updated! ")
+      }
+
     }
 
   }
@@ -61,6 +95,8 @@ export default function ProfilePage() {
       try {
         const token = getToken();
         const username = getUsername();
+        const userId = getUserId();
+
 
         if (!token || !username) {
           setErrorMessage("You need to log in first.");
@@ -68,7 +104,8 @@ export default function ProfilePage() {
           return;
         }
 
-        const data = await getUserByUsername(username);
+        // const data = await getUserByUsername(username);
+        const data = await getUserByUserId(parseInt(userId!));
         console.log(data);
         setUser(data);
         setNameUpdate(data?.username)
@@ -148,7 +185,7 @@ export default function ProfilePage() {
                 boolEditProfileMode ?
                   <div className="flex gap-2 flex-row flex-wrap justify-end">
                     <button onClick={() => setBoolEditProfileMode(false)} className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-200 shadow">Cancel</button>
-                    <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Save Changes</button>
+                    <button onClick={handleProfileUpdate} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Save Changes</button>
                   </div>
                   :
                   <button onClick={() => setBoolEditProfileMode(true)} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">
@@ -164,7 +201,14 @@ export default function ProfilePage() {
                   Name
                 </p>
                 {boolEditProfileMode ?
-                  <input type="text" className="bg-gray-200 w-full h-8 rounded-lg text-zinc-900 text-sm p-3" value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
+                  <div>
+
+                    <input type="text" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputNameError ? "border border-red-500" : ""} `} value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
+                    {boolInputNameError ?
+                      <div>
+                        <p className="text-red-500">{inputErrorMessage}MKay?</p>
+                      </div> : ""}
+                  </div>
                   :
                   <p className="mt-1 text-zinc-900">
                     {user?.username || getUsername() || "No username"}
@@ -176,18 +220,23 @@ export default function ProfilePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Email
                 </p>
-                <div className="mt-1 flex items-center gap-2 text-zinc-900">
+                
                   {
                     boolEditProfileMode ?
-                      <input type="email" className="bg-gray-200 w-full h-8 rounded-lg text-zinc-900 text-sm p-3" value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                      <div>
+                        <input type="email" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError ? "border border-red-500" : ""} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                        {boolInputEmailError ?
+                          <div>
+                            <p className="text-red-500">{inputErrorMessage} MKay?</p>
+                          </div> : ""}
+                      </div>
+
                       :
                       <div className="mt-1 flex items-center gap-2 text-zinc-900">
                         <Mail size={16} className="text-zinc-400" />
                         <span>{user?.email || "No email found"}</span>
                       </div>
                   }
-
-                </div>
               </div>
 
               <div>
@@ -196,8 +245,7 @@ export default function ProfilePage() {
                 </p>
                 {
                   boolEditProfileMode ?
-                    <input type="text" className="bg-gray-200 w-full h-8 rounded-lg text-zinc-900 text-sm p-3" value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
-
+                    <input type="text" className='w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ' value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
                     :
                     <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p>
                 }

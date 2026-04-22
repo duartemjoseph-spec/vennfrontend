@@ -69,6 +69,17 @@ export async function getUserByUsername(username: string) {
 
   return data;
 }
+export const getUserByUserId = async (id: number) => {
+  const response = await fetch(`${API_BASE}/User/GetUserById/${id}`, {
+    cache: "no-store"
+  });
+  const data = await response.json();
+
+  if (!response.ok){
+    throw new Error(data.message || "Could not load user.")
+  }
+  return data;
+}
 
 // Get all users
 export async function getAllUsers() {
@@ -90,7 +101,7 @@ export async function getAllUsers() {
   return data;
 }
 
-// Get all rooms
+// Get all rooms related to user!
 export async function getAllRooms(id: number ,token?: string) {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -401,6 +412,45 @@ export async function getWeeklyAvailability(userId: number) {
   }
 
   return data;
+}
+
+// Function to update user's profile by id!
+export interface UserProfile {
+  username: string;
+  email: string;
+  description: string;
+  userIcon: string | undefined; //File first converted into a string before saving!
+  banner: string | null;
+}
+export const updateUserProfileById = async (id: number, updatedUser: UserProfile ) => {
+  // const headers: HeadersInit = {
+  //   "Content-Type": "application/json",
+  // };
+
+  // if (token) {
+  //   headers.Authorization = `Bearer ${token}`;
+  // }
+  const token = getToken();
+
+const response = await fetch(`${API_BASE}/Profile/UpdateUserProfileByUserId/${id}`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization" : `Bearer ${token}`
+    },
+    body: JSON.stringify(updatedUser)
+  })
+  
+  if(!response.ok){
+    console.log(response)
+    console.log("response is not good!")
+    const data = response.json()
+    console.log(data)
+    return null;
+  }
+    const data = response.json();
+    return data;
 }
 
 // local storage helpers

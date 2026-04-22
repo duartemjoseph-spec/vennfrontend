@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Container from "@/components/Container";
-import { Mail, UserRound, Pencil, CalendarDays } from "lucide-react";
+import { Mail, UserRound, Pencil, CalendarDays, Divide } from "lucide-react";
 import { getToken, getUsername, getUserByUsername } from "@/lib/api";
 
 type UserData = {
@@ -21,6 +21,13 @@ export default function ProfilePage() {
   const [boolUserIcon, setBoolUserIcon] = useState<boolean>(user?.userIcon != null)
   const [creationDate, setCreationDate] = useState<string>("")
 
+  const [boolEditProfileMode, setBoolEditProfileMode] = useState(false);
+  
+  const [nameUpdate, setNameUpdate] = useState("")
+  const [emailUpdate, setEmailUpdate] = useState("")
+  const [bioUpdate, setBioUpdate] = useState("")
+
+
   const formatMonthYear = (date: string) => {
 
     const d = new Date(date);
@@ -28,6 +35,25 @@ export default function ProfilePage() {
       month: 'long',
       year: "numeric"
     })
+  }
+
+  const handleNameUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+    setNameUpdate(e.target.value);
+  }
+  const handleEmailUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmailUpdate(e.target.value);
+  }
+  const handleBioUpdate = (e: ChangeEvent<HTMLInputElement>) => {
+    setBioUpdate(e.target.value);
+  }
+
+  const handleProfileUpdate = async () => {
+    // First validate user's inputted data: if name or email is empty! (create an boolInputError)
+    if(nameUpdate == "")
+    {
+      // update new error bool and create error message below name input in a red border with red text!
+    }
+
   }
 
   useEffect(() => {
@@ -43,9 +69,13 @@ export default function ProfilePage() {
         }
 
         const data = await getUserByUsername(username);
+        console.log(data);
         setUser(data);
+        setNameUpdate(data?.username)
+        setEmailUpdate(data.email)
+        setBioUpdate(data.description)
 
-        if(data.userIcon != null) setBoolUserIcon(true); 
+        if (data.userIcon != null) setBoolUserIcon(true);
 
         setCreationDate(data.accountCreated)
 
@@ -103,7 +133,7 @@ export default function ProfilePage() {
               <div className="flex items-end gap-4">
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
                   {
-                    boolUserIcon ? <img src={user?.userIcon} alt="User Icon!" /> :  <UserRound size={32} className="text-zinc-500" />
+                    boolUserIcon ? <img src={user?.userIcon} alt="User Icon!" /> : <UserRound size={32} className="text-zinc-500" />
                   }
                 </div>
 
@@ -113,11 +143,19 @@ export default function ProfilePage() {
                   </p>
                 </div>
               </div>
-
-              <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">
-                <Pencil size={16} />
-                Edit Profile
-              </button>
+              {/* EDIT PROFILE HERE */}
+              {
+                boolEditProfileMode ?
+                  <div className="flex gap-2 flex-row flex-wrap justify-end">
+                    <button onClick={() => setBoolEditProfileMode(false)} className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-200 shadow">Cancel</button>
+                    <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Save Changes</button>
+                  </div>
+                  :
+                  <button onClick={() => setBoolEditProfileMode(true)} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">
+                    <Pencil size={16} />
+                    Edit Profile
+                  </button>
+              }
             </div>
 
             <div className="space-y-5">
@@ -125,9 +163,13 @@ export default function ProfilePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Name
                 </p>
-                <p className="mt-1 text-zinc-900">
-                  {user?.username || getUsername() || "No username"}
-                </p>
+                {boolEditProfileMode ?
+                  <input type="text" className="bg-gray-200 w-full h-8 rounded-lg text-zinc-900 text-sm p-3" value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
+                  :
+                  <p className="mt-1 text-zinc-900">
+                    {user?.username || getUsername() || "No username"}
+                  </p>
+                }
               </div>
 
               <div>
@@ -135,8 +177,16 @@ export default function ProfilePage() {
                   Email
                 </p>
                 <div className="mt-1 flex items-center gap-2 text-zinc-900">
-                  <Mail size={16} className="text-zinc-400" />
-                  <span>{user?.email || "No email found"}</span>
+                  {
+                    boolEditProfileMode ?
+                      <input type="email" className="bg-gray-200 w-full h-8 rounded-lg text-zinc-900 text-sm p-3" value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                      :
+                      <div className="mt-1 flex items-center gap-2 text-zinc-900">
+                        <Mail size={16} className="text-zinc-400" />
+                        <span>{user?.email || "No email found"}</span>
+                      </div>
+                  }
+
                 </div>
               </div>
 
@@ -144,7 +194,14 @@ export default function ProfilePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Bio
                 </p>
-                <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p>
+                {
+                  boolEditProfileMode ?
+                    <input type="text" className="bg-gray-200 w-full h-8 rounded-lg text-zinc-900 text-sm p-3" value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
+
+                    :
+                    <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p>
+                }
+                {/* <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p> */}
               </div>
             </div>
           </div>

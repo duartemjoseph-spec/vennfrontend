@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Container from "@/components/Container";
 import { Mail, UserRound, Pencil, CalendarDays, Divide } from "lucide-react";
 import { getToken, getUsername, UserProfile, updateUserProfileById, getUserId, getUserByUserId } from "@/lib/api";
+import BlobModal from "@/components/BlobModal";
 
 type UserData = {
   userId?: number;
@@ -17,14 +18,17 @@ type UserData = {
 export default function ProfilePage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");           // I might reuse this state for input errors!
+  const [errorMessage, setErrorMessage] = useState("");
   const [boolUserIcon, setBoolUserIcon] = useState<boolean>(user?.userIcon != null)
+  const [displayUserIcon, setDisplayUserIcon] = useState<string | undefined>(undefined)
   const [creationDate, setCreationDate] = useState<string>("")
 
   const [boolEditProfileMode, setBoolEditProfileMode] = useState<boolean>(false);
   const [boolInputNameError, setBoolInputNameError] = useState(false)
   const [boolInputEmailError, setBoolInputEmailError] = useState(false)
+  const [isBlobModalOpen, setIsBlobModalOpen] = useState(false)
   const [inputErrorMessage, setInputErrorMessage] = useState("")
+  const [uploadedImage, setUploadedImage] = useState<string | undefined>(undefined)
 
   const [nameUpdate, setNameUpdate] = useState("")
   const [emailUpdate, setEmailUpdate] = useState("")
@@ -66,28 +70,38 @@ export default function ProfilePage() {
     else {
       // lets update our profile!
       console.log("Updating profile NOW!!!")
-    
-      const updateUser : UserProfile = {
-        username : nameUpdate,
-        email : emailUpdate,
-        description : bioUpdate,
-        userIcon : user?.userIcon,
-        banner : null,
+      let userIcon: string | undefined = user?.userIcon;
+      if (uploadedImage != undefined || uploadedImage != null) {
+        if (uploadedImage.length > 2)
+          userIcon = uploadedImage;
+      }
+
+      const updateUser: UserProfile = {
+        username: nameUpdate,
+        email: emailUpdate,
+        description: bioUpdate,
+        userIcon: userIcon,
+        banner: null,
       }
       console.log(updateUser)
 
-      const updateResponse = await updateUserProfileById(user?.userId! ,updateUser, )
-      if(updateResponse != null){
+      const updateResponse = await updateUserProfileById(user?.userId!, updateUser,)
+      if (updateResponse != null) {
         setUser(updateResponse);
         setBoolEditProfileMode(false);
       }
-      else{
+      else {
         setBoolInputNameError(true);
         setInputErrorMessage("Error: Unable to Update your Profile! Profile may already be updated! ")
       }
 
     }
+  }
+  const handleBlob = () => {
+    console.log("Blob funciton invoked!")
+    setIsBlobModalOpen(true)
 
+    // have a modal open for user to unload image!
   }
 
   useEffect(() => {
@@ -112,8 +126,10 @@ export default function ProfilePage() {
         setEmailUpdate(data.email)
         setBioUpdate(data.description)
 
-        if (data.userIcon != null) setBoolUserIcon(true);
-
+        if (data.userIcon != null || data.userIcon != undefined) {
+          setBoolUserIcon(true);
+          setDisplayUserIcon(data.userIcon)
+        }
         setCreationDate(data.accountCreated)
 
       } catch (error) {
@@ -129,6 +145,15 @@ export default function ProfilePage() {
 
     loadUser();
   }, []);
+
+
+  useEffect(() => {
+    console.log(uploadedImage)
+    if (uploadedImage != undefined || uploadedImage != null) {
+      setDisplayUserIcon(uploadedImage);
+    }
+
+  }, [uploadedImage])
 
   if (isLoading) {
     return (
@@ -170,7 +195,9 @@ export default function ProfilePage() {
               <div className="flex items-end gap-4">
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
                   {
-                    boolUserIcon ? <img src={user?.userIcon} alt="User Icon!" /> : <UserRound size={32} className="text-zinc-500" />
+                    boolUserIcon ? <img onClick={handleBlob} src={displayUserIcon} alt="User Icon!" />
+                      :
+                      <UserRound onClick={handleBlob} size={32} className="text-zinc-500" />
                   }
                 </div>
 
@@ -206,7 +233,7 @@ export default function ProfilePage() {
                     <input type="text" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputNameError ? "border border-red-500" : ""} `} value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
                     {boolInputNameError ?
                       <div>
-                        <p className="text-red-500">{inputErrorMessage}MKay?</p>
+                        <p className="text-red-500">{inputErrorMessage}</p>
                       </div> : ""}
                   </div>
                   :
@@ -220,23 +247,23 @@ export default function ProfilePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Email
                 </p>
-                
-                  {
-                    boolEditProfileMode ?
-                      <div>
-                        <input type="email" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError ? "border border-red-500" : ""} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
-                        {boolInputEmailError ?
-                          <div>
-                            <p className="text-red-500">{inputErrorMessage} MKay?</p>
-                          </div> : ""}
-                      </div>
 
-                      :
-                      <div className="mt-1 flex items-center gap-2 text-zinc-900">
-                        <Mail size={16} className="text-zinc-400" />
-                        <span>{user?.email || "No email found"}</span>
-                      </div>
-                  }
+                {
+                  boolEditProfileMode ?
+                    <div>
+                      <input type="email" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError ? "border border-red-500" : ""} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                      {boolInputEmailError ?
+                        <div>
+                          <p className="text-red-500">{inputErrorMessage} MKay?</p>
+                        </div> : ""}
+                    </div>
+
+                    :
+                    <div className="mt-1 flex items-center gap-2 text-zinc-900">
+                      <Mail size={16} className="text-zinc-400" />
+                      <span>{user?.email || "No email found"}</span>
+                    </div>
+                }
               </div>
 
               <div>
@@ -271,6 +298,14 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      <BlobModal
+        isOpen={isBlobModalOpen}
+        onClose={() => setIsBlobModalOpen(false)}
+        uploadImage={uploadedImage}
+        setUploadImage={setUploadedImage}
+
+      />
     </Container>
   );
 }

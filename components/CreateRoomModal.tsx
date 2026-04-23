@@ -45,11 +45,11 @@ export default function CreateRoomModal({
         {
           title,
           category,
-          eventDate: new Date(eventDate).toISOString(),
+          eventDate,
           isRoomActive: true,
           userId: Number(savedUserId),
         },
-        token || undefined
+        token || undefined,
       );
 
       resetForm();

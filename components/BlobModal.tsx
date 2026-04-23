@@ -77,10 +77,10 @@ const BlobModal = ({ isOpen, onClose, uploadImage, setUploadImage }: BlobModalPr
 
             </form>
 
-            <div className='bg-gray-200'>
+            {/* <div className='bg-gray-200'>
                 <h1 className='text-black'>Image Uploaded!</h1>
                 <img src={uploadImage} alt="Image uploaded" />
-            </div>
+            </div> */}
 
         </Modal>
     )

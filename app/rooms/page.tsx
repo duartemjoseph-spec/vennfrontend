@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import CreateRoomModal from "@/components/CreateRoomModal";
 import { getAllRooms, getToken, getUserId } from "@/lib/api";
+import { Calendar, UsersRound } from "lucide-react";
 
 type RoomData = {
   roomId: number;
@@ -28,7 +29,7 @@ export default function RoomsPage() {
       const token = getToken();
       let id = getUserId();
       let userId = Number(id);
-      const data = await getAllRooms(userId,token || undefined);
+      const data = await getAllRooms(userId, token || undefined);
       setRooms(data || []);
     } catch (error) {
       if (error instanceof Error) {
@@ -95,6 +96,29 @@ export default function RoomsPage() {
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {errorMessage}
         </div>
+      )}
+      {/* test if loading is complete! Then we will map out our cards to display Active Rooms, Total Friends and FUNCTION to accept pending room invites! */}
+      {!isLoading && !errorMessage && (
+        <>
+
+          <div className="grid grid-cols-2 gap-5 mb-5">
+
+            <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <Calendar size={42} className="text-purple-600 bg-purple-200 border-10 border-purple-200 rounded-lg" />
+              <h5 className="font-bold text-zinc-900 text-2xl pt-4">3</h5>
+              <p className="text-zinc-900 text-xs">Active Rooms</p>
+            </div>
+
+            <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <UsersRound size={42} className="text-green-600 bg-green-200 border-10 border-green-200 rounded-lg" />
+              <h5 className="font-bold text-zinc-900 text-2xl pt-4">5</h5>
+              <p className="text-zinc-900 text-xs">Friends</p>
+            </div>
+          </div>
+          <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
+            {/* create boolean and check if user has pending invites */}
+          </div>
+        </>
       )}
 
       {!isLoading && !errorMessage && rooms.length === 0 && (

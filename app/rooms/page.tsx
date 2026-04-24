@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import CreateRoomModal from "@/components/CreateRoomModal";
-import { getAllRooms, getToken, getUserId } from "@/lib/api";
-import { Calendar, UsersRound } from "lucide-react";
+import { getAcceptedFriends, getAllRooms, getPendingRoomInvites, getToken, getUserId } from "@/lib/api";
+import { Calendar, UserRound, UsersRound } from "lucide-react";
+import { Button } from "flowbite-react";
 
 type RoomData = {
   roomId: number;
@@ -15,11 +16,23 @@ type RoomData = {
   userId: number;
 };
 
+export type RoomInviteDTO = {
+  roomId: number;
+  roomTitle: string;
+  category: string;
+  requesterId: number;
+  requesterName: string;
+  requesterIcon: string | undefined | null;
+}
+
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<RoomData[]>([]);
+  const [friends, setFriends] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isCreateRoomOpen, setIsCreateRoomOpen] = useState(false);
+  const [pendingRoomInvite, setPendingRoomInvite] = useState<RoomInviteDTO[]>([]);
+
 
   async function loadRooms() {
     try {
@@ -31,6 +44,12 @@ export default function RoomsPage() {
       let userId = Number(id);
       const data = await getAllRooms(userId, token || undefined);
       setRooms(data || []);
+      const friendList = await getAcceptedFriends(userId);
+      setFriends(friendList)
+      const invites = await getPendingRoomInvites(userId);
+      console.log(invites);
+      setPendingRoomInvite(invites)
+
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -105,18 +124,46 @@ export default function RoomsPage() {
 
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <Calendar size={42} className="text-purple-600 bg-purple-200 border-10 border-purple-200 rounded-lg" />
-              <h5 className="font-bold text-zinc-900 text-2xl pt-4">3</h5>
+              <h5 className="font-bold text-zinc-900 text-2xl pt-4">{rooms.length}</h5>
               <p className="text-zinc-900 text-xs">Active Rooms</p>
             </div>
 
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <UsersRound size={42} className="text-green-600 bg-green-200 border-10 border-green-200 rounded-lg" />
-              <h5 className="font-bold text-zinc-900 text-2xl pt-4">5</h5>
+              <h5 className="font-bold text-zinc-900 text-2xl pt-4">{friends.length}</h5>
               <p className="text-zinc-900 text-xs">Friends</p>
             </div>
           </div>
-          <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
+          <div className="">
             {/* create boolean and check if user has pending invites */}
+            <h2 className="text-zinc-900 pb-3">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
+            {
+              pendingRoomInvite.map((invite, key) => (
+                <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
+                  <h5 className="text-xl">{invite.roomTitle}</h5>
+                  <h5 className="text-md">{invite.category}</h5>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-15 w-15 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
+
+                      <img src={invite.requesterIcon ?? undefined} alt="" />
+
+                    </div>
+
+                    <p>Room Host: {invite.requesterName}</p>
+                  </div>
+
+
+                  <div className="flex justify-around pt-3">
+                    
+                    <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Accept Invitation</button>
+                    
+                    <button className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600">Decline</button>
+                  </div>
+                </div> 
+              ))
+            }
+                
+       
           </div>
         </>
       )}

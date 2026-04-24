@@ -70,7 +70,7 @@ const BlobModal = ({ isOpen, onClose, uploadImage, setUploadImage }: BlobModalPr
                 </div>
 
                 {/* <div className="relative mb-5"> */}
-                <input onChange={handleFileChange} className={`text-black h-20 border rounded-sm ${isFileError ? "border-red-500 border-2" : "border-black "}`} type="file" id='file' name='file' />
+                <input onChange={handleFileChange} className={`text-black h-20 w-full border rounded-sm ${isFileError ? "border-red-500 border-2" : "border-black "}`} type="file" id='file' name='file' />
 
                 <Button type='submit' className=''>Upload</Button>
                 {/* </div> */}

@@ -74,7 +74,6 @@ export default function ProfilePage() {
     }
     else {
       // lets update our profile!
-      console.log("Updating profile NOW!!!")
       let userIcon: string | undefined = user?.userIcon;
       if (uploadedImage != undefined || uploadedImage != null) {
         if (uploadedImage.length > 2)
@@ -88,10 +87,7 @@ export default function ProfilePage() {
         userIcon: userIcon,
         banner: null,
       }
-      console.log(updateUser)
-
-      console.log(user);
-
+  
       const updateResponse = await updateUserProfileById(user?.userId!, updateUser,)
       // const updateResponse = null;
       if (updateResponse != null) {
@@ -109,7 +105,6 @@ export default function ProfilePage() {
   }
   catch(error)
   {
-    console.log("caught error!")
     console.log(error)
   }
   }
@@ -133,7 +128,6 @@ export default function ProfilePage() {
 
       // const data = await getUserByUsername(username);
       const data = await getUserByUserId(parseInt(userId!));
-      console.log(data);
       setUser(data);
       setNameUpdate(data?.username)
       setEmailUpdate(data.email)
@@ -142,10 +136,14 @@ export default function ProfilePage() {
       else{
         setBioUpdate(data.description);
       }
-
-      if (data.userIcon != "" || data.userIcon != undefined) {
+      console.log(data.userIcon)
+      if (data.userIcon == "" || data.userIcon != undefined || data.userIcon != null) {
         setBoolUserIcon(true);
         setDisplayUserIcon(data.userIcon)
+      }
+      else{
+        setBoolUserIcon(false)
+        // setDisplayUserIcon
       }
       setCreationDate(data.accountCreated)
 
@@ -167,7 +165,6 @@ export default function ProfilePage() {
 
 
   useEffect(() => {
-    console.log(uploadedImage)
     if (uploadedImage != undefined || uploadedImage != null) {
       setDisplayUserIcon(uploadedImage);
     }
@@ -237,7 +234,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="">
                     {
-                      boolEditProfileMode ? <Camera className="text-gray-500" size={20}></Camera> : ""
+                      boolEditProfileMode ? <Camera onClick={handleBlob} className="text-gray-500 cursor-pointer" size={20}></Camera> : ""
                     }
                     
                   </div>

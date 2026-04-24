@@ -453,6 +453,19 @@ const response = await fetch(`${API_BASE}/Profile/UpdateUserProfileByUserId/${id
     return data;
 }
 
+// Function to GET Pending list!
+export const getPendingRoomInvites = async (userId: number) => {
+  const res = await fetch(`${API_BASE}/RoomMember/GetUserInvitationByUserId/${userId}`,{
+    cache: "no-cache"
+  })
+  if(!res.ok){
+  
+    return [];
+  }
+  const data = res.json();
+  return data;
+}
+
 // local storage helpers
 export function saveToken(token: string) {
   localStorage.setItem("vennToken", token);

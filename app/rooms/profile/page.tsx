@@ -137,9 +137,13 @@ export default function ProfilePage() {
       setUser(data);
       setNameUpdate(data?.username)
       setEmailUpdate(data.email)
-      setBioUpdate(data.description)
+      if(data.description == null || data.description == undefined)
+        setBioUpdate("");
+      else{
+        setBioUpdate(data.description);
+      }
 
-      if (data.userIcon != null || data.userIcon != undefined) {
+      if (data.userIcon != "" || data.userIcon != undefined) {
         setBoolUserIcon(true);
         setDisplayUserIcon(data.userIcon)
       }

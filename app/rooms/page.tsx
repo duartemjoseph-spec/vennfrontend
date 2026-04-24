@@ -20,6 +20,7 @@ export type RoomInviteDTO = {
   roomId: number;
   roomTitle: string;
   category: string;
+  eventDate: string,
   requesterId: number;
   requesterName: string;
   requesterIcon: string | undefined | null;
@@ -136,16 +137,24 @@ export default function RoomsPage() {
           </div>
           <div className="">
             {/* create boolean and check if user has pending invites */}
-            <h2 className="text-zinc-900 pb-3">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
+            <h2 className="text-zinc-500 text-sm pb-3">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
             {
               pendingRoomInvite.map((invite, key) => (
                 <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
-                  <h5 className="text-xl">{invite.roomTitle}</h5>
-                  <h5 className="text-md">{invite.category}</h5>
+                  <h5 className="text-xl font-semibold">{invite.roomTitle}</h5>
+                  <h5 className="text-sm text-zinc-500">{invite.category}</h5>
+                  <h5 className="text-sm text-zinc-600">{formatDate(invite.eventDate)}</h5>
                   <div className="flex items-center gap-3">
                     <div className="flex h-15 w-15 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
-
-                      <img src={invite.requesterIcon ?? undefined} alt="" />
+                      {
+                        invite.requesterIcon !== null ? 
+                        <img src={invite.requesterIcon ?? undefined} alt="User Icon" /> 
+                        : 
+                        <div>
+                          <UserRound />
+                        </div>
+                      }
+                      
 
                     </div>
 
@@ -154,9 +163,9 @@ export default function RoomsPage() {
 
 
                   <div className="flex justify-around pt-3">
-                    
+                    {/* Button will invoke endpoint to change status to accepted */}
                     <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Accept Invitation</button>
-                    
+                    {/* button will invoke endpoint to remove invitation instance from DB! */}
                     <button className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600">Decline</button>
                   </div>
                 </div> 

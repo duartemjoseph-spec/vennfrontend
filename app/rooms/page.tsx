@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import CreateRoomModal from "@/components/CreateRoomModal";
-import { getAcceptedFriends, getAllRooms, getPendingRoomInvites, getToken, getUserId } from "@/lib/api";
+import { acceptRoomInvite, declineRoomInvite, getAcceptedFriends, getAllRooms, getPendingRoomInvites, getToken, getUserId } from "@/lib/api";
 import { Calendar, UserRound, UsersRound } from "lucide-react";
 import { Button } from "flowbite-react";
 
@@ -48,7 +48,7 @@ export default function RoomsPage() {
       const friendList = await getAcceptedFriends(userId);
       setFriends(friendList)
       const invites = await getPendingRoomInvites(userId);
-      console.log(invites);
+      // console.log(invites);
       setPendingRoomInvite(invites)
 
     } catch (error) {
@@ -60,6 +60,47 @@ export default function RoomsPage() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  const handleAcceptRoomInvite = async (roomId: number) => {
+    const userId = getUserId();
+    if (userId == null || userId == "") {
+      console.log("User id not saved properly, log in again.")
+      return;
+    }
+
+    const result = await acceptRoomInvite(roomId, Number(userId))
+
+    if (result) {
+      // success message: ??
+      // reload invite component!
+      await loadRooms();
+      // reload available rooms
+
+    }
+    else {
+      // display error message that unable to join room at this time!
+      console.log("Unable to accept room invite!")
+    }
+  }
+
+  const handleRemoveRoomInvite = async (roomId: number) => {
+    const userId = getUserId();
+    if (userId == null || userId == "") {
+      console.log("User id not saved properly, log in again.")
+      return;
+    }
+
+    const result = await declineRoomInvite(roomId, Number(userId))
+
+    if(result){
+      await loadRooms();
+
+    }
+    else {
+      console.log("unable to remove user!")
+    }
+
   }
 
   useEffect(() => {
@@ -140,38 +181,38 @@ export default function RoomsPage() {
             <h2 className="text-zinc-500 text-sm pb-3">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
 
             <div className="grid grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))] gap-4">
-            {
-              pendingRoomInvite.map((invite, key) => (
-                <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
-                  <h5 className="text-xl font-semibold">{invite.roomTitle}</h5>
-                  <h5 className="text-sm text-zinc-500">{invite.category}</h5>
-                  <h5 className="text-sm text-zinc-600">{formatDate(invite.eventDate)}</h5>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-15 w-15 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
-                      {
-                        invite.requesterIcon !== null ? 
-                        <img src={invite.requesterIcon ?? undefined} alt="User Icon" /> 
-                        : 
-                        <div>
-                          <UserRound />
-                        </div>
-                      }
+              {
+                pendingRoomInvite.map((invite, key) => (
+                  <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
+                    <h5 className="text-xl font-semibold">{invite.roomTitle}</h5>
+                    <h5 className="text-sm text-zinc-500">{invite.category}</h5>
+                    <h5 className="text-sm text-zinc-600">{formatDate(invite.eventDate)}</h5>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-15 w-15 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
+                        {
+                          invite.requesterIcon !== null ?
+                            <img src={invite.requesterIcon ?? undefined} alt="User Icon" />
+                            :
+                            <div>
+                              <UserRound />
+                            </div>
+                        }
+                      </div>
+                      <p>Room Host: {invite.requesterName}</p>
                     </div>
-                    <p>Room Host: {invite.requesterName}</p>
-                  </div>
 
-                  <div className="flex justify-around pt-3">
-                    {/* Button will invoke endpoint to change status to accepted */}
-                    <button className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Accept Invitation</button>
-                    {/* button will invoke endpoint to remove invitation instance from DB! */}
-                    <button className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600">Decline</button>
+                    <div className="flex justify-around pt-3">
+                      {/* Button will invoke endpoint to change status to accepted */}
+                      <button onClick={() => handleAcceptRoomInvite(invite.roomId)} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Accept Invitation</button>
+                      {/* button will invoke endpoint to remove invitation instance from DB! */}
+                      <button onClick={() => handleRemoveRoomInvite(invite.roomId)} className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600">Decline</button>
+                    </div>
                   </div>
-                </div> 
-              ))
-            }
-                
+                ))
+              }
+
             </div>
-       
+
           </div>
         </>
       )}

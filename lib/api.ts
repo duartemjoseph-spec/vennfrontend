@@ -422,35 +422,29 @@ export interface UserProfile {
   userIcon: string | undefined; //File first converted into a string before saving!
   banner: string | null;
 }
-export const updateUserProfileById = async (id: number, updatedUser: UserProfile ) => {
-  // const headers: HeadersInit = {
-  //   "Content-Type": "application/json",
-  // };
+export const updateUserProfileById = async (id: number, updatedUser: UserProfile) => {
 
-  // if (token) {
-  //   headers.Authorization = `Bearer ${token}`;
-  // }
   const token = getToken();
 
-const response = await fetch(`${API_BASE}/Profile/UpdateUserProfileByUserId/${id}`,
-  {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization" : `Bearer ${token}`
-    },
-    body: JSON.stringify(updatedUser)
-  })
-  
-  if(!response.ok){
+  const response = await fetch(`${API_BASE}/Profile/UpdateUserProfileByUserId/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(updatedUser)
+    })
+
+  if (!response.ok) {
     console.log(response)
     console.log("response is not good!")
     const data = response.json()
     console.log(data)
     return null;
   }
-    const data = response.json();
-    return data;
+  const data = response.json();
+  return data;
 }
 
 // Function to GET Pending list!
@@ -458,12 +452,36 @@ export const getPendingRoomInvites = async (userId: number) => {
   const res = await fetch(`${API_BASE}/RoomMember/GetUserInvitationByUserId/${userId}`,{
     cache: "no-cache"
   })
-  if(!res.ok){
-  
+  if (!res.ok) {
+
     return [];
   }
   const data = res.json();
   return data;
+}
+// function to remove 
+export const declineRoomInvite = async (roomId: number, memberId: number) => {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/RoomMember/RemoveMemberFromRoom`, {
+    method: "PUT",
+    headers: {
+      "Content-Type" : "application/json",
+
+    },
+    body: JSON.stringify({
+        roomModelId : roomId,
+        memberId : memberId
+    })
+  })
+
+  if(res.ok)
+  {
+    console.log(res);
+    const data = await res.json();
+    console.log(data);
+    return true;
+  }
+  return false;
 }
 
 // local storage helpers

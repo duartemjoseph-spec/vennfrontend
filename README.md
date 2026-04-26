@@ -9,6 +9,17 @@ Bugs List:
 Lets Change the logic where inviting users to rooms list should EXCLUDE the HOST of the room and current User Members!
 
 
+Notes for rooms page when user enters a specific room:
+    Within the main card, display the host user's name and Icon within the top card!
+
+    WHen clicking on invite members, the list SHOuld not display users who already joined room or is Hosting the room: (Daniel might need to create an endpoint to return users who hasn't joined the room or isn't hosting the room)
+
+    Adjust the ROom Info card:
+        Change "Created By User" from the user id to the username
+
+    display availability of course
+
+
 ## Hosted Link!
 https://venn-iota.vercel.app/
 

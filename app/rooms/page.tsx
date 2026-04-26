@@ -138,6 +138,8 @@ export default function RoomsPage() {
           <div className="">
             {/* create boolean and check if user has pending invites */}
             <h2 className="text-zinc-500 text-sm pb-3">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
+
+            <div className="grid grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))] gap-4">
             {
               pendingRoomInvite.map((invite, key) => (
                 <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
@@ -154,13 +156,9 @@ export default function RoomsPage() {
                           <UserRound />
                         </div>
                       }
-                      
-
                     </div>
-
                     <p>Room Host: {invite.requesterName}</p>
                   </div>
-
 
                   <div className="flex justify-around pt-3">
                     {/* Button will invoke endpoint to change status to accepted */}
@@ -172,6 +170,7 @@ export default function RoomsPage() {
               ))
             }
                 
+            </div>
        
           </div>
         </>

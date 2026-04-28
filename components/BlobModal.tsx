@@ -32,15 +32,12 @@ const BlobModal = ({ isOpen, onClose, uploadImage, setUploadImage }: BlobModalPr
     const handleSubmit = async (e: React.SubmitEvent) => {
         // To prevent refreshing the page on submit
         e.preventDefault();
-        console.log("submit button invoked!")
 
         //check if our file is in our useState
         if (!file) {
-            console.log("No file selected")
             setIsFileError(true);
             return;
         }
-        console.log(file)
         // we are using DateTime Now to prevent duplicate files within our blob
         const uniqueFile = `${Date.now()}-${file.name}`
 

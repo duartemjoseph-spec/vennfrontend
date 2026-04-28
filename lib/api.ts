@@ -207,6 +207,34 @@ export async function getMembersByRoomId(roomId: string) {
 
   return data;
 }
+export type RoomDTO = {
+  title : string,
+  category: string,
+  eventDate : string,
+  isRoomActive : boolean
+
+}
+// Update room info by room id:
+export const UpdateRoomByRoomId = async (roomId: number, updateRoomInfo: RoomDTO) => {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/Room/UpdateRoom/${roomId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type" : "application/json",
+      "Authorization" : `Bearer ${token}`
+    },
+    body : JSON.stringify(updateRoomInfo)
+  })
+
+  if(res.ok)
+  {
+    const data = res.json();
+    return data;
+  }
+  const data = res.json();
+  console.log("Error unable to update: " + data)
+  return [];
+}
 
 // Invite member to room
 export async function inviteMemberToRoom(roomModelId: number, memberId: number) {

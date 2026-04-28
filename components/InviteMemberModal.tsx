@@ -11,6 +11,7 @@ type InviteMemberModalProps = {
   roomId: number;
   existingMemberIds?: number[];
   onMemberInvited: () => void;
+  hostId: number
 };
 
 type UserItem = {
@@ -26,6 +27,7 @@ export default function InviteMemberModal({
   roomId,
   existingMemberIds = [],
   onMemberInvited,
+  hostId,
 }: InviteMemberModalProps) {
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState<UserItem[]>([]);
@@ -61,7 +63,7 @@ export default function InviteMemberModal({
       const id = user.userId || 0;
       const text = `${user.username || ""} ${user.email || ""}`.toLowerCase();
 
-      if (existingMemberIds.includes(id)) return false;
+      if (existingMemberIds.includes(id) || id == hostId) return false;
 
       return text.includes(searchValue.toLowerCase());
     });
@@ -75,7 +77,8 @@ export default function InviteMemberModal({
       onMemberInvited();
     } catch (error) {
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        console.log(error.message)
+        setErrorMessage("Unable to send invite. User's invite already pending");
       } else {
         setErrorMessage("Could not invite member.");
       }

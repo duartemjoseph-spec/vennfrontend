@@ -64,6 +64,8 @@ export default function RoomDetailPage() {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
+  const [hostId, setHostId] = useState(0)
+
   useEffect(() => {
     setCurrentUserId(Number(getUserId() || 0));
   }, []);
@@ -78,10 +80,9 @@ export default function RoomDetailPage() {
 
       const roomData = await getRoomById(roomId, token || undefined);
       const memberData = await getMembersByRoomId(roomId);
-      console.log(roomData);
-
       setRoom(roomData);
       setMembers(memberData || []);
+      setHostId(roomData.userId)
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -417,6 +418,7 @@ export default function RoomDetailPage() {
           roomId={room.roomId}
           existingMemberIds={existingMemberIds}
           onMemberInvited={loadRoomPage}
+          hostId={hostId}
         />
       )}
 

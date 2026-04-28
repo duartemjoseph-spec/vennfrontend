@@ -2,28 +2,30 @@
 import React, { useEffect, useState } from 'react'
 import Modal from './Modal'
 import { RoomData } from '@/app/rooms/[RoomId]/page'
-import { Button, cardTheme } from 'flowbite-react'
 import { RoomDTO, UpdateRoomByRoomId } from '@/lib/api'
-import { title } from 'process'
 
 interface ModalProps {
     isOpen: boolean,
     onClose: () => void
     // import current room info!
-    roomModel: RoomData | null
+    roomModel: RoomData 
     setRoomModel: React.Dispatch<React.SetStateAction<RoomData | null>>;
 }
 
 const UpdateRoomModal = ({ isOpen, onClose, roomModel, setRoomModel }: ModalProps) => {
-    const [titleUpdate, setTitleUpdate] = useState(roomModel?.title)
-    const [categoryUpdate, setCategoryUpdate] = useState(roomModel?.category)
+    const [titleUpdate, setTitleUpdate] = useState<string>("")
+    const [categoryUpdate, setCategoryUpdate] = useState<string>("")
     const [eventDateUpdate, setEventDateUpdate] = useState("")
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
 
     useEffect(() => {
-        console.log(roomModel)
-        console.log("Update Modal invoked!")
-    }, [])
+        if(isOpen){
+            setTitleUpdate(roomModel.title ?? "")
+            setCategoryUpdate(roomModel.category ?? "")
+            setEventDateUpdate(roomModel.eventDate ?? "");
+        }
+        
+    } , [isOpen])
 
 
 

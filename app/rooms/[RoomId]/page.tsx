@@ -418,7 +418,7 @@ export default function RoomDetailPage() {
       <UpdateRoomModal  
         isOpen={isUpdateOpen}
         onClose={() => setIsUpdateOpen(false)}
-        roomModel={room}
+        roomModel={room!}
         setRoomModel={(setRoom)}
       />
 

@@ -475,6 +475,28 @@ export const updateUserProfileById = async (id: number, updatedUser: UserProfile
   return data;
 }
 
+// Remove Room.
+export const deleteRoomByRoomId = async (roomId: number) => {
+
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/Room/DeleteRoomById/${roomId}`, {
+    method: "PUT",
+    headers: {
+      "content-type" : "application/json",
+      "authorization" : `Bearer ${token}`
+    }
+
+  });
+  if(res.ok){
+    const data = await res.text();
+    return  data === "true" || data;
+  }
+  const data = await res.text()
+  console.log(data);
+  return false;
+
+}
+
 // Function to GET Pending list!
 export const getPendingRoomInvites = async (userId: number) => {
   const res = await fetch(`${API_BASE}/RoomMember/GetUserInvitationByUserId/${userId}`,{

@@ -55,7 +55,7 @@ const UpdateRoomModal = ({ isOpen, onClose, roomModel, setRoomModel }: ModalProp
             setRoomModel(updatedRoom);
 
         }
-
+        setIsLoadingUpdate(false);
         onClose();
     }
 

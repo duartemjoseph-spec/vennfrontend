@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Container from "@/components/Container";
 import InviteMemberModal from "@/components/InviteMemberModal";
-import { getMembersByRoomId, getRoomById, getToken } from "@/lib/api";
+import {
+  getMembersByRoomId,
+  getRoomById,
+  getToken,
+  getUserId,
+} from "@/lib/api";
 import {
   ArrowLeft,
   CalendarDays,
@@ -14,6 +19,12 @@ import {
   UserRound,
   UserPlus,
 } from "lucide-react";
+
+type AvailabilityItem = {
+  day: number | string;
+  hour: number;
+  status: number;
+};
 
 type RoomData = {
   roomId: number;
@@ -30,8 +41,11 @@ type RoomMember = {
   isAccepted?: boolean;
   userId?: number;
   username?: string;
-  userIcon?: string;
+  userIcon?: string | null;
+  availability?: AvailabilityItem[];
 };
+
+const timeSlots = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
 export default function RoomDetailPage() {
   const params = useParams();
@@ -39,9 +53,15 @@ export default function RoomDetailPage() {
 
   const [room, setRoom] = useState<RoomData | null>(null);
   const [members, setMembers] = useState<RoomMember[]>([]);
+  const [currentUserId, setCurrentUserId] = useState(0);
+
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+
+  useEffect(() => {
+    setCurrentUserId(Number(getUserId() || 0));
+  }, []);
 
   async function loadRoomPage() {
     try {
@@ -77,6 +97,8 @@ export default function RoomDetailPage() {
       .filter((id) => id > 0);
   }, [members]);
 
+  const isHost = room ? Number(room.userId) === Number(currentUserId) : false;
+
   function formatDate(dateString?: string) {
     if (!dateString) return "No date set";
 
@@ -92,9 +114,37 @@ export default function RoomDetailPage() {
     });
   }
 
+  function getRoomDayLabel(dateString?: string) {
+    if (!dateString) return "Selected Day";
+
+    const date = new Date(dateString);
+
+    return date.toLocaleString("en-US", {
+      weekday: "long",
+    });
+  }
+
+  function formatHour(hour: number) {
+    if (hour === 12) return "12 PM";
+    return `${hour - 12} PM`;
+  }
+
+  function getStatusForHour(member: RoomMember, hour: number) {
+    return member.availability?.find((slot) => slot.hour === hour)?.status;
+  }
+
+  function getStatusClass(status?: number) {
+    if (status === 2) return "bg-green-100 border border-green-300";
+    if (status === 1) return "bg-yellow-100 border border-yellow-300";
+    if (status === 0) return "bg-red-100 border border-red-300";
+    return "bg-white border border-zinc-200";
+  }
+
+  const roomDayLabel = getRoomDayLabel(room?.eventDate);
+
   return (
     <Container>
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-6">
           <button
             onClick={() => router.push("/rooms")}
@@ -202,8 +252,16 @@ export default function RoomDetailPage() {
                       key={member.userId ?? member.userModelId ?? index}
                       className="flex items-center gap-3 rounded-2xl bg-zinc-50 p-4"
                     >
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-200">
-                        <UserRound size={18} className="text-zinc-700" />
+                      <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-zinc-200">
+                        {member.userIcon ? (
+                          <img
+                            src={member.userIcon}
+                            alt={member.username || "User"}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <UserRound size={18} className="text-zinc-700" />
+                        )}
                       </div>
 
                       <div>
@@ -216,6 +274,98 @@ export default function RoomDetailPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-xl font-semibold text-zinc-900">
+                Compare Availability
+              </h2>
+
+              <p className="mb-2 text-sm text-zinc-500">
+                Currently showing availability for{" "}
+                <span className="font-medium text-zinc-800">{roomDayLabel}</span>
+                .
+              </p>
+
+              <p className="mb-4 text-sm text-zinc-500">
+                {isHost
+                  ? "You are the room host. Day switching can be added as soon as the backend day endpoint is ready."
+                  : "Only the room host will be able to switch days once that backend endpoint is added."}
+              </p>
+
+              <div className="mb-4 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+                This compare view is using the room members data currently
+                returned by the backend for the room event day.
+              </div>
+
+              {members.length === 0 ? (
+                <div className="rounded-2xl bg-zinc-50 p-4 text-zinc-600">
+                  No availability found for this room yet.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <div className="min-w-[900px] rounded-2xl border border-zinc-200">
+                    <div
+                      className="grid border-b border-zinc-200 bg-white"
+                      style={{
+                        gridTemplateColumns: `80px repeat(${members.length}, minmax(180px, 1fr))`,
+                      }}
+                    >
+                      <div className="p-4" />
+                      {members.map((member, index) => (
+                        <div
+                          key={member.userId ?? member.userModelId ?? index}
+                          className="flex flex-col items-center gap-2 p-4"
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-200">
+                            {member.userIcon ? (
+                              <img
+                                src={member.userIcon}
+                                alt={member.username || "User"}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <UserRound size={18} className="text-zinc-700" />
+                            )}
+                          </div>
+                          <p className="text-sm font-medium text-zinc-900">
+                            {member.username || "Member"}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {timeSlots.map((hour) => (
+                      <div
+                        key={hour}
+                        className="grid border-b border-zinc-100"
+                        style={{
+                          gridTemplateColumns: `80px repeat(${members.length}, minmax(180px, 1fr))`,
+                        }}
+                      >
+                        <div className="p-4 text-sm font-medium text-zinc-700">
+                          {formatHour(hour)}
+                        </div>
+
+                        {members.map((member, index) => {
+                          const status = getStatusForHour(member, hour);
+
+                          return (
+                            <div
+                              key={`${member.userId ?? member.userModelId ?? index}-${hour}`}
+                              className="p-2"
+                            >
+                              <div
+                                className={`h-10 rounded-xl ${getStatusClass(status)}`}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

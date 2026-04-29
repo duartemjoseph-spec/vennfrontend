@@ -253,14 +253,14 @@ export default function SchedulePage() {
         </div>
 
         <div className="mb-4 rounded-2xl border border-zinc-200 bg-white p-2 shadow-sm">
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {days.map((day) => (
               <button
                 key={day}
                 type="button"
                 onClick={() => setSelectedDay(day)}
                 className={[
-                  "rounded-xl px-3 py-2 text-sm font-medium transition",
+                  "rounded-lg px-1 py-1 text-[10px] sm:px-3 sm:py-2 sm:text-sm font-medium transition",
                   selectedDay === day
                     ? "bg-zinc-100 text-zinc-900 shadow-sm"
                     : "text-zinc-500 hover:bg-zinc-50",
@@ -278,7 +278,7 @@ export default function SchedulePage() {
               type="button"
               onClick={() => setPeriod("AM")}
               className={[
-                "rounded-full px-4 py-2 text-sm font-medium transition",
+                "rounded-full px-2 py-1 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium transition",
                 period === "AM"
                   ? "bg-zinc-100 text-zinc-900"
                   : "text-zinc-500 hover:bg-zinc-50",
@@ -291,7 +291,7 @@ export default function SchedulePage() {
               type="button"
               onClick={() => setPeriod("PM")}
               className={[
-                "rounded-full px-4 py-2 text-sm font-medium transition",
+                "rounded-full px-2 py-1 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium transition",
                 period === "PM"
                   ? "bg-purple-100 text-purple-700"
                   : "text-zinc-500 hover:bg-zinc-50",
@@ -334,7 +334,7 @@ export default function SchedulePage() {
                 {selectedDay} - {period === "PM" ? "Afternoon/Evening" : "Morning"}
               </h2>
 
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {timeSlots.map((time) => {
                   const key = `${selectedDay}-${time}`;
                   const state = slots[key] || "empty";
@@ -344,10 +344,10 @@ export default function SchedulePage() {
                       key={key}
                       type="button"
                       onClick={() => toggleSlot(time)}
-                      className={`rounded-2xl px-4 py-4 text-center font-semibold shadow-sm transition hover:scale-[1.02] ${stateStyles[state]}`}
+                      className={`rounded-xl px-2 py-2 smLpx-3 sm:py-4 text-center text-xs sm:text-xs font-semibold shadow-sm transition ${stateStyles[state]}`}
                     >
-                      <div className="text-sm">{time}</div>
-                      <div className="mt-1 text-lg">{stateIcons[state]}</div>
+                      <div className="text-[10px] sm:text-xs">{time}</div>
+                      <div className="mt-1 text-sm sm:text-base">{stateIcons[state]}</div>
                     </button>
                   );
                 })}

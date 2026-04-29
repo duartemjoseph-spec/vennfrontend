@@ -174,7 +174,7 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <Container>
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-4xl px-3 sm:px-0">
           <p className="text-zinc-600">Loading profile...</p>
         </div>
       </Container>
@@ -219,11 +219,11 @@ export default function ProfilePage() {
           <div className="h-28 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400" />
 
           <div className="px-6 pb-6">
-            <div className="-mt-10 mb-6 flex items-center justify-between">
-              <div className="flex items-end gap-4">
+            <div className="-mt-10 mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-end sm:gap-4">
                 <div className="flex items-end">
 
-                  <div className={`flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow ${boolEditProfileMode ? "cursor-pointer" : "cursor-default"} `}>
+                  <div className={`flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow ${boolEditProfileMode ? "cursor-pointer" : "cursor-default"} `}>
                     {
                       boolUserIcon
                         ?
@@ -249,12 +249,12 @@ export default function ProfilePage() {
               {/* EDIT PROFILE HERE */}
               {
                 boolEditProfileMode ?
-                  <div className="flex gap-2 flex-row flex-wrap justify-end">
-                    <button onClick={() => setBoolEditProfileMode(false)} className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-200 shadow">Cancel</button>
-                    <button onClick={handleProfileUpdate} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Save Changes</button>
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <button onClick={() => setBoolEditProfileMode(false)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2 text-xs sm:text-sm">Cancel</button>
+                    <button onClick={handleProfileUpdate} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-x1 bg-purple-600 px-3 py-2 text-xs sm:text-sm">Save Changes</button>
                   </div>
                   :
-                  <button onClick={() => setBoolEditProfileMode(true)} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">
+                  <button onClick={() => setBoolEditProfileMode(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2 text-xs sm:text-sm">
                     <Pencil size={16} />
                     Edit Profile
                   </button>
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                 {boolEditProfileMode ?
                   <div>
 
-                    <input type="text" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputNameError ? "border border-red-500" : ""} `} value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
+                    <input type="text" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputNameError ? "border border-red-500" : ""} `} value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
                     {boolInputNameError ?
                       <div>
                         <p className="text-red-500">{inputErrorMessage}</p>
@@ -290,7 +290,7 @@ export default function ProfilePage() {
                 {
                   boolEditProfileMode ?
                     <div>
-                      <input type="email" className={`w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError ? "border border-red-500" : ""} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                      <input type="email" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError ? "border border-red-500" : ""} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
                       {boolInputEmailError ?
                         <div>
                           <p className="text-red-500">{inputErrorMessage} MKay?</p>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                 </p>
                 {
                   boolEditProfileMode ?
-                    <input type="text" className='w-full h-8 rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ' value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
+                    <input type="text" className='w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ' value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
                     :
                     <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p>
                 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { clearToken, clearUserId, clearUsername } from "@/lib/api";
@@ -17,8 +18,19 @@ export default function Sidebar() {
   return (
     <aside className="w-72 rounded-3xl sticky top-0 max-h-screen bg-white border border-zinc-200 p-5 shadow-sm">
       <div className="mb-6">
-        <div className="text-xl font-bold text-zinc-900">Venn</div>
-        <div className="text-sm text-zinc-600">Find overlap fast</div>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/venn-logo-transparent.png"
+            alt="Venn logo"
+            width={36}
+            height={36}
+            className="h-9 w-9 object-contain"
+          />
+          <div>
+            <div className="text-xl font-bold text-zinc-900">Venn</div>
+            <div className="text-sm text-zinc-600">Find overlap fast</div>
+          </div>
+        </div>
       </div>
 
       <nav className="space-y-2">

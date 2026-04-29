@@ -131,6 +131,7 @@ export default function ProfilePage() {
       setUser(data);
       setNameUpdate(data?.username)
       setEmailUpdate(data.email)
+      
       if(data.description == null || data.description == undefined)
         setBioUpdate("");
       else{
@@ -313,7 +314,7 @@ export default function ProfilePage() {
                   boolEditProfileMode ?
                     <input type="text" className='w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ' value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
                     :
-                    <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p>
+                    <p className="mt-1 text-zinc-700">{user?.description == "" ? "No bio has been added!" : user?.description}</p>
                 }
                 {/* <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p> */}
               </div>

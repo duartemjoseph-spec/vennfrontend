@@ -19,6 +19,8 @@ import {
   UserRound,
   UserPlus,
 } from "lucide-react";
+import UpdateRoomModal from "@/components/UpdateRoomModal";
+import DeleteModal from "@/components/DeleteModal";
 
 type AvailabilityItem = {
   day: number | string;
@@ -26,7 +28,7 @@ type AvailabilityItem = {
   status: number;
 };
 
-type RoomData = {
+export type RoomData = {
   roomId: number;
   title?: string;
   category?: string;
@@ -59,6 +61,11 @@ export default function RoomDetailPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isInviteOpen, setIsInviteOpen] = useState(false);
 
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  const [hostId, setHostId] = useState(0)
+
   useEffect(() => {
     setCurrentUserId(Number(getUserId() || 0));
   }, []);
@@ -73,9 +80,9 @@ export default function RoomDetailPage() {
 
       const roomData = await getRoomById(roomId, token || undefined);
       const memberData = await getMembersByRoomId(roomId);
-
       setRoom(roomData);
       setMembers(memberData || []);
+      setHostId(roomData.userId)
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -183,7 +190,7 @@ export default function RoomDetailPage() {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center justify-end gap-3">
                     <span
                       className={[
                         "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium",
@@ -202,6 +209,12 @@ export default function RoomDetailPage() {
                       <UserPlus size={16} />
                       Invite Member
                     </button>
+                    {
+                      room.userId == currentUserId ? <button onClick={() => setIsUpdateOpen(true)} className="inline-flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-600">Update Room</button> : ""
+                    }
+                    {
+                      room.userId == currentUserId ? <button onClick={() => setIsDeleteOpen(true)} className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600">Delete Room</button> : ""
+                    }
                   </div>
                 </div>
 
@@ -405,8 +418,23 @@ export default function RoomDetailPage() {
           roomId={room.roomId}
           existingMemberIds={existingMemberIds}
           onMemberInvited={loadRoomPage}
+          hostId={hostId}
         />
       )}
+
+      <UpdateRoomModal  
+        isOpen={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
+        roomModel={room!}
+        setRoomModel={(setRoom)}
+      />
+
+      <DeleteModal
+        roomId={room?.roomId!}
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+      />
+
     </Container>
   );
 }

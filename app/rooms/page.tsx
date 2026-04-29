@@ -183,11 +183,11 @@ export default function RoomsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {
                 pendingRoomInvite.map((invite, key) => (
-                  <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
-                    <h5 className="text-xl font-semibold">{invite.roomTitle}</h5>
-                    <h5 className="text-sm text-zinc-500">{invite.category}</h5>
-                    <h5 className="text-sm text-zinc-600">{formatDate(invite.eventDate)}</h5>
-                    <div className="flex items-center gap-2 mt-2">
+                  <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-sm">
+                    <h5 className="text-lg sm:text-xl font-semibold leading-tight">{invite.roomTitle}</h5>
+                    <h5 className="mt-1 text-xs sm:text-sm text-zinc-500">{invite.category}</h5>
+                    <h5 className="mt-1 text-xs sm:text-sm text-zinc-600">{formatDate(invite.eventDate)}</h5>
+                    <div className="flex items-center gap-3 mt-3">
                       <div className="flex h-10 w-10 rounded-full overflow-hidden bg-zinc-100 flex items-center justify-center">
                        
                           {invite.requesterIcon ? (
@@ -204,11 +204,11 @@ export default function RoomsPage() {
                       <p className="text-sm">Room Host: {invite.requesterName}</p>
                     </div>
 
-                    <div className="flex gap-2 pt-3">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-4">
                       {/* Button will invoke endpoint to change status to accepted */}
-                      <button onClick={() => handleAcceptRoomInvite(invite.roomId)} className="flex-1 rounded-lg bg-purple-500 px-2 py-1 text-xs text-white">Accept Invitation</button>
+                      <button onClick={() => handleAcceptRoomInvite(invite.roomId)} className="w-full rounded-lg bg-purple-500 px-3 py-2 sm:text-sm font-medium text-white">Accept Invitation</button>
                       {/* button will invoke endpoint to remove invitation instance from DB! */}
-                      <button onClick={() => handleRemoveRoomInvite(invite.roomId)} className="flex-1 rounded-lg bg-red-500 px-2 py-1 text-xs text-white">Decline</button>
+                      <button onClick={() => handleRemoveRoomInvite(invite.roomId)} className="w-full rounded-lg bg-red-500 px-3 py-2 sm:text-sm font-medium text-white">Decline</button>
                     </div>
                   </div>
                 ))

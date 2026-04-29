@@ -263,7 +263,7 @@ export default function RoomDetailPage() {
 
   return (
     <Container>
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-6xl ">
         <div className="mb-6">
           <button
             onClick={() => router.push("/rooms")}

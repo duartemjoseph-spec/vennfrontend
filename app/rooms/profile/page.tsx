@@ -137,7 +137,6 @@ export default function ProfilePage() {
       else{
         setBioUpdate(data.description);
       }
-      console.log(data.userIcon)
       if (data.userIcon == "" || data.userIcon != undefined || data.userIcon != null) {
         setBoolUserIcon(true);
         setDisplayUserIcon(data.userIcon)

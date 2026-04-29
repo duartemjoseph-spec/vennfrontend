@@ -34,7 +34,6 @@ const UpdateRoomModal = ({ isOpen, onClose, roomModel, setRoomModel }: ModalProp
         setIsLoadingUpdate(true);
         const id = roomModel!.roomId
         console.log(titleUpdate + " : " + categoryUpdate + " : " + eventDateUpdate + " : ")
-        console.log("update room button invoked!")
         // we will update title, category and EventDate!
         // add check if any values are empty!
 

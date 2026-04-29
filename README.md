@@ -17,7 +17,7 @@ Notes for rooms page when user enters a specific room:
     Adjust the ROom Info card:
         Change "Created By User" from the user id to the username
 
-    display availability of course
+    display availability of course ([JD] availability now shows up for each user in the room.)
 
 
 ## Hosted Link!

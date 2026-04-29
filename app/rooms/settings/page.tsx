@@ -64,10 +64,12 @@ const page = () => {
                 <h2 className='text-lg text-zinc-900 font-semibold'>Email Notifications</h2>
                 <p className='text-zinc-500'>Receive updates via email</p>
               </div>
-              <div className='flex items-center'>
-                {/* radio button */}
-                <ToggleSwitch color='dark' checked={boolEmailNotification} onChange={handleEmailNotification} ></ToggleSwitch>
-              </div>
+              
+                <div className='flex items-center'>
+                
+                  <ToggleSwitch color='dark' checked={boolEmailNotification} onChange={handleEmailNotification} ></ToggleSwitch>
+                </div>
+              
             </div>
 
             <hr className='pt-5 mt-5' />
@@ -98,7 +100,7 @@ const page = () => {
             </div>
           </div>
 
-          <div className='pt-8 pb-2'>
+          <div className='pt-8 pb-2 hidden'>
 
             <div className='flex justify-between'>
               <div>
@@ -129,28 +131,28 @@ const page = () => {
                 <div className='flex flex-row justify-between w-full '>
                   {/* This will display what language is currently toggled! */}
                   <p>English</p>
-                  <Check className='' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
               <DropdownItem className='hover:bg-gray-300 rounded-xl'>
-                {/* Spanish */}
+                
                 <div className='flex flex-row justify-between w-full '>
                   <p>Spanish</p>
-                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
               <DropdownItem className='hover:bg-gray-300 rounded-xl'>
-                {/* Francis */}
+           
                 <div className='flex flex-row justify-between w-full '>
                   <p>Francis</p>
-                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
               <DropdownItem className='hover:bg-gray-300 rounded-xl'>
-                {/* Deutsch */}
+                
                 <div className='flex flex-row justify-between w-full '>
                   <p>Deutsch</p>
-                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
             </Dropdown>
@@ -188,28 +190,28 @@ const page = () => {
                 {/* Pacific Time (PST) */}
                 <div className='flex flex-row justify-between w-full '>
                   <p>Pacific Time (PST)</p>
-                  <Check className='' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
               <DropdownItem className='hover:bg-gray-300 rounded-xl'>
                 {/* Mountain Time (MST) */}
                 <div className='flex flex-row justify-between w-full '>
                   <p>Mountain Time (MST)</p>
-                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
               <DropdownItem className='hover:bg-gray-300 rounded-xl'>
                 {/* Central Time (CST) */}
                 <div className='flex flex-row justify-between w-full '>
                   <p>Central Time (CST)</p>
-                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
               <DropdownItem className='hover:bg-gray-300 rounded-xl'>
                 {/* Eastern Time (EST) */}
                 <div className='flex flex-row justify-between w-full '>
                   <p>Eastern Time (EST)</p>
-                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check> 
+                  <Check className='hidden' aria-label='English settings toggled!' size={16}></Check>
                 </div>
               </DropdownItem>
             </Dropdown>

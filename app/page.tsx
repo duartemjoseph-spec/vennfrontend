@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import Modal from "@/components/Modal";
 import {
@@ -107,21 +108,47 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-100 relative overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="h-72 w-72 rounded-full bg-purple-300/30 blur-3xl absolute -translate-x-24 -translate-y-10" />
-        <div className="h-72 w-72 rounded-full bg-cyan-300/30 blur-3xl absolute translate-x-24 translate-y-10" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 opacity-20 blur-3xl">
+          <Image
+            src="/venn-logo-transparent.png"
+            alt="Venn background logo"
+            width={600}
+            height={600}
+            className="h-[320px] w-[320px] object-contain md:h-[520px] md:w-[520px]"
+            priority
+          />
+        </div>
+
+        <div className="absolute left-1/2 top-[58%] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/20 blur-3xl" />
       </div>
 
       <header className="relative z-10 flex items-center justify-between px-8 py-6">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-purple-500" />
+          <Image
+            src="/venn-logo-transparent.png"
+            alt="Venn logo"
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+            priority
+          />
           <span className="text-2xl font-bold text-zinc-900">Venn</span>
         </div>
       </header>
 
       <main className="relative z-10 flex items-center justify-center px-6">
         <section className="w-full max-w-4xl rounded-3xl border border-zinc-200 bg-white/90 backdrop-blur p-12 md:p-16 text-center shadow-sm">
-          <div className="mx-auto mb-6 h-12 w-12 rounded-2xl bg-purple-500" />
+          <div className="mx-auto mb-6 flex items-center justify-center">
+            <Image
+              src="/venn-logo-transparent.png"
+              alt="Venn logo"
+              width={72}
+              height={72}
+              className="h-16 w-16 object-contain md:h-[72px] md:w-[72px]"
+              priority
+            />
+          </div>
 
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">
             See when everyone&apos;s free.

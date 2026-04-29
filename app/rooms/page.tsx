@@ -141,14 +141,14 @@ export default function RoomsPage() {
 
         <button
           onClick={() => setIsCreateRoomOpen(true)}
-          className="rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-600"
+          className="rounded-xl bg-purple-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-purple-600"
         >
           + New Room
         </button>
       </div>
 
       {isLoading && (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-zinc-600 shadow-sm">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 shadow-sm">
           Loading rooms...
         </div>
       )}
@@ -162,50 +162,53 @@ export default function RoomsPage() {
       {!isLoading && !errorMessage && (
         <>
 
-          <div className="grid grid-cols-2 gap-5 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
 
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <Calendar size={42} className="text-purple-600 bg-purple-200 border-10 border-purple-200 rounded-lg" />
-              <h5 className="font-bold text-zinc-900 text-2xl pt-4">{rooms.length}</h5>
+              <h5 className="font-bold text-zinc-900 text-lg pt-2">{rooms.length}</h5>
               <p className="text-zinc-900 text-xs">Active Rooms</p>
             </div>
 
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <UsersRound size={42} className="text-green-600 bg-green-200 border-10 border-green-200 rounded-lg" />
-              <h5 className="font-bold text-zinc-900 text-2xl pt-4">{friends.length}</h5>
+              <h5 className="font-bold text-zinc-900 text-lg pt-2">{friends.length}</h5>
               <p className="text-zinc-900 text-xs">Friends</p>
             </div>
           </div>
           <div className="">
             {/* create boolean and check if user has pending invites */}
-            <h2 className="text-zinc-500 text-sm pb-3">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
+            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : ""}</h2>
 
-            <div className="grid grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))] gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {
                 pendingRoomInvite.map((invite, key) => (
-                  <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm mb-5">
+                  <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
                     <h5 className="text-xl font-semibold">{invite.roomTitle}</h5>
                     <h5 className="text-sm text-zinc-500">{invite.category}</h5>
                     <h5 className="text-sm text-zinc-600">{formatDate(invite.eventDate)}</h5>
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-15 w-15 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-zinc-100 shadow">
-                        {
-                          invite.requesterIcon !== null ?
-                            <img src={invite.requesterIcon ?? undefined} alt="User Icon" />
-                            :
-                            <div>
-                              <UserRound />
-                            </div>
-                        }
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="flex h-10 w-10 rounded-full overflow-hidden bg-zinc-100 flex items-center justify-center">
+                       
+                          {invite.requesterIcon ? (
+                            <img src={invite.requesterIcon} alt="User Icon" 
+                            className="h-full w-full object-cover"
+                            />
+                        ):(
+                            
+                              <UserRound size={16}/>
+                        )}
+                          
+                        
                       </div>
-                      <p>Room Host: {invite.requesterName}</p>
+                      <p className="text-sm">Room Host: {invite.requesterName}</p>
                     </div>
 
-                    <div className="flex justify-around pt-3">
+                    <div className="flex gap-2 pt-3">
                       {/* Button will invoke endpoint to change status to accepted */}
-                      <button onClick={() => handleAcceptRoomInvite(invite.roomId)} className="flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-600">Accept Invitation</button>
+                      <button onClick={() => handleAcceptRoomInvite(invite.roomId)} className="flex-1 rounded-lg bg-purple-500 px-2 py-1 text-xs text-white">Accept Invitation</button>
                       {/* button will invoke endpoint to remove invitation instance from DB! */}
-                      <button onClick={() => handleRemoveRoomInvite(invite.roomId)} className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600">Decline</button>
+                      <button onClick={() => handleRemoveRoomInvite(invite.roomId)} className="flex-1 rounded-lg bg-red-500 px-2 py-1 text-xs text-white">Decline</button>
                     </div>
                   </div>
                 ))

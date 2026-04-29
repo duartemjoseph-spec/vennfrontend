@@ -180,7 +180,7 @@ export default function RoomsPage() {
             {/* create boolean and check if user has pending invites */}
             <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : ""}</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4">
               {
                 pendingRoomInvite.map((invite, key) => (
                   <div key={key} className="text-zinc-900 rounded-3xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-sm">

@@ -48,7 +48,9 @@ export default function FriendsPage() {
   const [acceptedFriends, setAcceptedFriends] = useState<FriendEntry[]>([]);
   const [pendingFriends, setPendingFriends] = useState<FriendEntry[]>([]);
   const [searchValue, setSearchValue] = useState("");
-  const [selectedTab, setSelectedTab] = useState<"accepted" | "pending">("accepted");
+  const [selectedTab, setSelectedTab] = useState<"accepted" | "pending">(
+    "accepted"
+  );
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -94,7 +96,8 @@ export default function FriendsPage() {
   const filteredAccepted = useMemo(() => {
     return acceptedFriends.filter((friend) => {
       const otherUser = getOtherUser(friend, currentUserId);
-      const text = `${otherUser?.username || ""} ${otherUser?.email || ""}`.toLowerCase();
+      const text =
+        `${otherUser?.username || ""} ${otherUser?.email || ""}`.toLowerCase();
 
       return text.includes(searchValue.toLowerCase());
     });
@@ -213,25 +216,36 @@ export default function FriendsPage() {
                 return (
                   <div
                     key={friend.id}
-                    className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+                    className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
                   >
-                    <div className="mb-3 flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
-                          <UserRoundPlus size={20} className="text-zinc-700" />
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-zinc-100">
+                          {otherUser?.userIcon ? (
+                            <img
+                              src={otherUser.userIcon}
+                              alt={otherUser?.username || "Friend"}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <UserRoundPlus
+                              size={20}
+                              className="text-zinc-700"
+                            />
+                          )}
                         </div>
 
-                        <div>
-                          <h2 className="font-semibold text-zinc-900">
+                        <div className="min-w-0 flex-1">
+                          <h2 className="truncate font-semibold text-zinc-900">
                             {otherUser?.username || "Friend"}
                           </h2>
-                          <p className="text-xs text-zinc-500">
+                          <p className="truncate text-xs text-zinc-500">
                             {otherUser?.email || "No email"}
                           </p>
                         </div>
                       </div>
 
-                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">
+                      <span className="shrink-0 whitespace-nowrap rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">
                         Accepted
                       </span>
                     </div>
@@ -266,19 +280,30 @@ export default function FriendsPage() {
               pendingFriends.map((friend) => (
                 <div
                   key={friend.id}
-                  className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+                  className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
-                        <UserRoundPlus size={20} className="text-zinc-700" />
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-zinc-100">
+                        {friend.requester?.userIcon ? (
+                          <img
+                            src={friend.requester.userIcon}
+                            alt={friend.requester?.username || "User"}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <UserRoundPlus
+                            size={20}
+                            className="text-zinc-700"
+                          />
+                        )}
                       </div>
 
-                      <div>
-                        <h2 className="font-semibold text-zinc-900">
+                      <div className="min-w-0">
+                        <h2 className="truncate font-semibold text-zinc-900">
                           {friend.requester?.username || "User"}
                         </h2>
-                        <p className="text-sm text-zinc-500">
+                        <p className="truncate text-sm text-zinc-500">
                           {friend.requester?.email || "No email"}
                         </p>
                       </div>

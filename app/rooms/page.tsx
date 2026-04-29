@@ -141,7 +141,7 @@ export default function RoomsPage() {
 
         <button
           onClick={() => setIsCreateRoomOpen(true)}
-          className="rounded-xl bg-purple-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-purple-600"
+          className="rounded-xl bg-purple-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-purple-600 cursor-pointer"
         >
           + New Room
         </button>
@@ -178,7 +178,7 @@ export default function RoomsPage() {
           </div>
           <div className="">
             {/* create boolean and check if user has pending invites */}
-            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
+            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : ""}</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {

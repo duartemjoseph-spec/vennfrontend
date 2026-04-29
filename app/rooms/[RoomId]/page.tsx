@@ -5,10 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import Container from "@/components/Container";
 import InviteMemberModal from "@/components/InviteMemberModal";
 import {
+  createWeeklyAvailability,
   getMembersByRoomId,
   getRoomById,
   getToken,
   getUserId,
+  getWeeklyAvailability,
 } from "@/lib/api";
 import {
   ArrowLeft,
@@ -18,6 +20,7 @@ import {
   CircleDot,
   UserRound,
   UserPlus,
+  Save,
 } from "lucide-react";
 import UpdateRoomModal from "@/components/UpdateRoomModal";
 import DeleteModal from "@/components/DeleteModal";
@@ -43,9 +46,12 @@ type RoomMember = {
   isAccepted?: boolean;
   userId?: number;
   username?: string;
+  email?: string;
   userIcon?: string | null;
   availability?: AvailabilityItem[];
 };
+
+type SlotState = "empty" | "busy" | "maybe" | "available";
 
 const timeSlots = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
@@ -57,8 +63,12 @@ export default function RoomDetailPage() {
   const [members, setMembers] = useState<RoomMember[]>([]);
   const [currentUserId, setCurrentUserId] = useState(0);
 
+  const [mySlots, setMySlots] = useState<Record<number, SlotState>>({});
+  const [isSavingAvailability, setIsSavingAvailability] = useState(false);
+
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
@@ -73,6 +83,7 @@ export default function RoomDetailPage() {
   async function loadRoomPage() {
     try {
       setErrorMessage("");
+      setSuccessMessage("");
       setIsLoading(true);
 
       const token = getToken();
@@ -104,7 +115,28 @@ export default function RoomDetailPage() {
       .filter((id) => id > 0);
   }, [members]);
 
-  const isHost = room ? Number(room.userId) === Number(currentUserId) : false;
+  const myMember = useMemo(() => {
+    return members.find(
+      (member) =>
+        Number(member.userId || member.userModelId || 0) === Number(currentUserId)
+    );
+  }, [members, currentUserId]);
+
+  useEffect(() => {
+    if (!myMember) return;
+
+    const nextSlots: Record<number, SlotState> = {};
+
+    timeSlots.forEach((hour) => {
+      nextSlots[hour] = "empty";
+    });
+
+    (myMember.availability || []).forEach((slot) => {
+      nextSlots[slot.hour] = backendStatusToSlotState(slot.status);
+    });
+
+    setMySlots(nextSlots);
+  }, [myMember]);
 
   function formatDate(dateString?: string) {
     if (!dateString) return "No date set";
@@ -121,22 +153,31 @@ export default function RoomDetailPage() {
     });
   }
 
-  function getRoomDayLabel(dateString?: string) {
-    if (!dateString) return "Selected Day";
-
-    const date = new Date(dateString);
-
-    return date.toLocaleString("en-US", {
-      weekday: "long",
-    });
-  }
-
   function formatHour(hour: number) {
     if (hour === 12) return "12 PM";
     return `${hour - 12} PM`;
   }
 
+  function getRoomDayNumber() {
+    if (!room?.eventDate) return null;
+    return new Date(room.eventDate).getDay();
+  }
+
+  function getRoomDayLabel() {
+    if (!room?.eventDate) return "Selected Day";
+
+    return new Date(room.eventDate).toLocaleString("en-US", {
+      weekday: "long",
+    });
+  }
+
   function getStatusForHour(member: RoomMember, hour: number) {
+    const memberId = Number(member.userId || member.userModelId || 0);
+
+    if (memberId === currentUserId) {
+      return slotStateToBackendStatus(mySlots[hour] || "empty");
+    }
+
     return member.availability?.find((slot) => slot.hour === hour)?.status;
   }
 
@@ -147,7 +188,78 @@ export default function RoomDetailPage() {
     return "bg-white border border-zinc-200";
   }
 
-  const roomDayLabel = getRoomDayLabel(room?.eventDate);
+  function getNextSlotState(current: SlotState) {
+    if (current === "empty") return "available";
+    if (current === "available") return "busy";
+    if (current === "busy") return "maybe";
+    return "empty";
+  }
+
+  function handleMySlotClick(hour: number) {
+    setMySlots((prev) => ({
+      ...prev,
+      [hour]: getNextSlotState(prev[hour] || "empty"),
+    }));
+  }
+
+  async function handleSaveMyAvailability() {
+    try {
+      setErrorMessage("");
+      setSuccessMessage("");
+      setIsSavingAvailability(true);
+
+      const userId = Number(currentUserId);
+      const roomDayNumber = getRoomDayNumber();
+
+      if (!userId) {
+        throw new Error("You need to log in first.");
+      }
+
+      if (roomDayNumber === null) {
+        throw new Error("Room day could not be found.");
+      }
+
+      const existingWeeklyAvailability = await getWeeklyAvailability(userId);
+
+      const availabilityWithoutRoomDay = (existingWeeklyAvailability || []).filter(
+        (item: AvailabilityItem) => {
+          const dayNumber =
+            typeof item.day === "number" ? item.day : Number(item.day);
+
+          return dayNumber !== roomDayNumber;
+        }
+      );
+
+      const updatedRoomDayAvailability = timeSlots
+        .filter((hour) => (mySlots[hour] || "empty") !== "empty")
+        .map((hour) => ({
+          day: roomDayNumber,
+          hour,
+          status: slotStateToBackendStatus(mySlots[hour] || "empty"),
+        }));
+
+      const finalPayload = [
+        ...availabilityWithoutRoomDay.map((item: AvailabilityItem) => ({
+          day: typeof item.day === "number" ? item.day : Number(item.day),
+          hour: item.hour,
+          status: item.status,
+        })),
+        ...updatedRoomDayAvailability,
+      ];
+
+      await createWeeklyAvailability(userId, finalPayload);
+      setSuccessMessage("Your room availability was updated.");
+      await loadRoomPage();
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Could not save availability.");
+      }
+    } finally {
+      setIsSavingAvailability(false);
+    }
+  }
 
   return (
     <Container>
@@ -169,8 +281,14 @@ export default function RoomDetailPage() {
         )}
 
         {!isLoading && errorMessage && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
             {errorMessage}
+          </div>
+        )}
+
+        {!isLoading && successMessage && (
+          <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+            {successMessage}
           </div>
         )}
 
@@ -282,7 +400,7 @@ export default function RoomDetailPage() {
                           {member.username || "Member"}
                         </p>
                         <p className="text-sm text-zinc-500">
-                          User ID: {member.userId || member.userModelId || "N/A"}
+                          {member.email || `User ID: ${member.userId ?? member.userModelId ?? "N/A"}`}
                         </p>
                       </div>
                     </div>
@@ -292,25 +410,33 @@ export default function RoomDetailPage() {
             </div>
 
             <div className="mt-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-semibold text-zinc-900">
-                Compare Availability
-              </h2>
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-zinc-900">
+                    Compare Availability
+                  </h2>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Showing availability for{" "}
+                    <span className="font-medium text-zinc-800">
+                      {getRoomDayLabel()}
+                    </span>
+                    . Click your own time blocks to update them.
+                  </p>
+                </div>
 
-              <p className="mb-2 text-sm text-zinc-500">
-                Currently showing availability for{" "}
-                <span className="font-medium text-zinc-800">{roomDayLabel}</span>
-                .
-              </p>
-
-              <p className="mb-4 text-sm text-zinc-500">
-                {isHost
-                  ? "You are the room host. Day switching can be added as soon as the backend day endpoint is ready."
-                  : "Only the room host will be able to switch days once that backend endpoint is added."}
-              </p>
+                <button
+                  onClick={handleSaveMyAvailability}
+                  disabled={isSavingAvailability}
+                  className="inline-flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-600 disabled:opacity-60"
+                >
+                  <Save size={16} />
+                  {isSavingAvailability ? "Saving..." : "Save My Availability"}
+                </button>
+              </div>
 
               <div className="mb-4 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-                This compare view is using the room members data currently
-                returned by the backend for the room event day.
+                Only your own column is editable. Click a block to cycle:
+                Available → Busy → Maybe → Empty.
               </div>
 
               {members.length === 0 ? (
@@ -363,16 +489,30 @@ export default function RoomDetailPage() {
                         </div>
 
                         {members.map((member, index) => {
+                          const memberId = Number(
+                            member.userId || member.userModelId || 0
+                          );
                           const status = getStatusForHour(member, hour);
+                          const isMyColumn = memberId === currentUserId;
 
                           return (
                             <div
                               key={`${member.userId ?? member.userModelId ?? index}-${hour}`}
                               className="p-2"
                             >
-                              <div
-                                className={`h-10 rounded-xl ${getStatusClass(status)}`}
-                              />
+                              {isMyColumn ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMySlotClick(hour)}
+                                  className={`h-10 w-full rounded-xl transition hover:scale-[1.02] ${getStatusClass(
+                                    status
+                                  )}`}
+                                />
+                              ) : (
+                                <div
+                                  className={`h-10 rounded-xl ${getStatusClass(status)}`}
+                                />
+                              )}
                             </div>
                           );
                         })}
@@ -437,4 +577,18 @@ export default function RoomDetailPage() {
 
     </Container>
   );
+}
+
+function backendStatusToSlotState(status?: number): SlotState {
+  if (status === 0) return "busy";
+  if (status === 1) return "maybe";
+  if (status === 2) return "available";
+  return "empty";
+}
+
+function slotStateToBackendStatus(state: SlotState) {
+  if (state === "busy") return 0;
+  if (state === "maybe") return 1;
+  if (state === "available") return 2;
+  return -1;
 }

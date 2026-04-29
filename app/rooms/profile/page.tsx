@@ -251,8 +251,8 @@ export default function ProfilePage() {
               {
                 boolEditProfileMode ?
                   <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <button onClick={() => setBoolEditProfileMode(false)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2 text-xs sm:text-sm">Cancel</button>
-                    <button onClick={handleProfileUpdate} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-x1 bg-purple-600 px-3 py-2 text-xs sm:text-sm">Save Changes</button>
+                    <button onClick={() => setBoolEditProfileMode(false)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 hover:bg-purple-600 cursor-pointer px-3 py-2 text-xs sm:text-sm">Cancel</button>
+                    <button onClick={handleProfileUpdate} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 cursor-pointer px-3 py-2 text-xs sm:text-sm">Save Changes</button>
                   </div>
                   :
                   <button onClick={() => setBoolEditProfileMode(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2 text-xs sm:text-sm">

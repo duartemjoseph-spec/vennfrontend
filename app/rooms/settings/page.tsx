@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 
 const page = () => {
 
-  const [boolNotification, setBoolNotification] = useState(true);
+  const [boolNotification, setBoolNotification] = useState(false);
   const [boolEmailNotification, setBoolEmailNotification] = useState(false);
   const [boolSoundNotification, setBoolSoundNotification] = useState(false);
   const [isDark, setIsDark] = useState(false)
@@ -54,7 +54,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='black' checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
+                <ToggleSwitch color='dark'  checked={boolNotification} onChange={handleNotification} ></ToggleSwitch>
               </div>
             </div>
             <hr className='pt-5 mt-5' />
@@ -67,7 +67,7 @@ const page = () => {
               
                 <div className='flex items-center'>
                 
-                  <ToggleSwitch color='dark' checked={boolEmailNotification} onChange={handleEmailNotification} ></ToggleSwitch>
+                  <ToggleSwitch color={'dark'} checked={boolEmailNotification} onChange={handleEmailNotification} ></ToggleSwitch>
                 </div>
               
             </div>
@@ -81,7 +81,7 @@ const page = () => {
               </div>
               <div className='flex items-center'>
                 {/* radio button */}
-                <ToggleSwitch color='dark' checked={boolSoundNotification} onChange={handleSoundNotification} ></ToggleSwitch>
+                <ToggleSwitch color={'dark'} checked={boolSoundNotification} onChange={handleSoundNotification} ></ToggleSwitch>
               </div>
             </div>
           </div>

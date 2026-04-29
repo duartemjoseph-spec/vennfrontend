@@ -106,8 +106,8 @@ const UpdateRoomModal = ({ isOpen, onClose, roomModel, setRoomModel }: ModalProp
                     </label>
                     <input
                         id="room-date"
-                        type="datetime-local"
-                        // value={eventDate}
+                        type="date"
+                        
                         value={eventDateUpdate}
                         onChange={(e) => setEventDateUpdate(e.target.value)}
                         placeholder={roomModel?.eventDate}

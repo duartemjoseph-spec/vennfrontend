@@ -178,7 +178,7 @@ export default function RoomsPage() {
           </div>
           <div className="">
             {/* create boolean and check if user has pending invites */}
-            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : "No Room invites pending"}</h2>
+            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : ""}</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {

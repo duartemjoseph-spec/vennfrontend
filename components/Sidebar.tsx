@@ -71,14 +71,14 @@ export default function Sidebar() {
 
       <div className="space-y-2 text-sm">
         <Link
-          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100 text-[16px]"
           href="/rooms/profile"
         >
           Profile
         </Link>
 
         <Link
-          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          className="block rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100 text-[16px]"
           href="/rooms/settings"
         >
           Settings
@@ -86,7 +86,7 @@ export default function Sidebar() {
 
         <button
           onClick={handleLogout}
-          className="w-full text-left rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100"
+          className="w-full text-left rounded-xl px-3 py-2 text-zinc-800 hover:bg-zinc-100 text-[16px]"
         >
           Log Out
         </button>

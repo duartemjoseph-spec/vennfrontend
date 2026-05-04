@@ -130,7 +130,7 @@ export default function CreateRoomModal({
           </label>
           <input
             id="room-date"
-            type="datetime-local"
+            type="date"
             value={eventDate}
             onChange={(e) => setEventDate(e.target.value)}
             className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 outline-none focus:border-purple-500"

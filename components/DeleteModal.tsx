@@ -31,10 +31,10 @@ const DeleteModal = ({ isOpen, onClose, roomId }: DeleteModalProp) => {
             <div className='text-zinc-900'>
 
                 <h1 className='text-2xl'>Are you sure you want to delete room?</h1>
-                <div className='flex justify-around pt-2'>
+                <div className='flex justify-around pt-5'>
 
-                <button onClick={handleDelete} className='flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm text-white font-semibold transition hover:bg-red-600 shadow'>Yes</button>
-                <button className='flex items-center gap-2 rounded-xl bg-gray-400 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-500 shadow' onClick={onClose}>No</button>
+                <button onClick={handleDelete} className='flex items-center gap-2 rounded-xl bg-red-500 px-6 py-2 text-sm text-white font-semibold transition hover:bg-red-600 shadow'>Yes</button>
+                <button className='flex items-center gap-2 rounded-xl bg-gray-400 px-6 py-2 text-sm font-medium text-white transition hover:bg-gray-500 shadow' onClick={onClose}>No</button>
                 </div>
             </div>
 

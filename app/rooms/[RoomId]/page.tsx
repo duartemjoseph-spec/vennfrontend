@@ -532,19 +532,21 @@ export default function RoomDetailPage() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
+
                 <div className="rounded-2xl bg-zinc-50 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Room ID
+                    Room Title
                   </p>
-                  <p className="mt-2 text-zinc-900">{room.roomId}</p>
+                  <p className="mt-2 text-zinc-900">{room.title}</p>
                 </div>
 
                 <div className="rounded-2xl bg-zinc-50 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Created By User
+                    Users Joined
                   </p>
-                  <p className="mt-2 text-zinc-900">{room.userId}</p>
+                  <p className="mt-2 text-zinc-900">{members.length}</p>
                 </div>
+
               </div>
             </div>
           </>

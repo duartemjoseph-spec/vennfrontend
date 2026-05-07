@@ -58,9 +58,11 @@ export default function FriendsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentUserId, setCurrentUserId] = useState(0);
+  const [currentUsername, setCurrentUsername] = useState("")
 
   useEffect(() => {
     setCurrentUserId(Number(getUserId() || 0));
+    setCurrentUsername(getUsername() || "" )
   }, []);
 
   async function loadFriends(userId: number) {
@@ -159,7 +161,7 @@ export default function FriendsPage() {
 
           <div className="rounded-2xl bg-blue-500 p-5 text-white shadow-sm">
             <p className="text-sm opacity-90">Current User</p>
-            <p className="mt-2 text-2xl font-semibold">{getUsername() || ""}</p>
+            <p className="mt-2 text-2xl font-semibold">{currentUsername}</p>
           </div>
         </div>
 

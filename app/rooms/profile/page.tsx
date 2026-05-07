@@ -170,6 +170,17 @@ export default function ProfilePage() {
     }
 
   }, [uploadedImage])
+  useEffect(() => {
+    if(!boolEditProfileMode)
+      setDisplayUserIcon(user?.userIcon)
+    else
+    {
+      if( uploadedImage !== undefined)
+      {
+        setDisplayUserIcon(uploadedImage)
+      }
+    }
+  }, [boolEditProfileMode])
 
   if (isLoading) {
     return (

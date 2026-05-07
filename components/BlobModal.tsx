@@ -58,7 +58,7 @@ const BlobModal = ({ isOpen, onClose, uploadImage, setUploadImage }: BlobModalPr
         <Modal isOpen={isOpen} onClose={handleClose}>
             <form className='space-y-4' onSubmit={handleSubmit}>
                 <div className="mb-6">
-                    <label htmlFor='file' className="text-2xl font-bold text-zinc-900">Upload Image Here</label>
+                    <label htmlFor='icon' className="text-2xl font-bold text-zinc-900">Upload Image Here</label>
                     {isFileError &&
                         (<p className="mt-2 text-sm text-red-600">
                             No File has been selected!
@@ -67,7 +67,8 @@ const BlobModal = ({ isOpen, onClose, uploadImage, setUploadImage }: BlobModalPr
                 </div>
 
                 {/* <div className="relative mb-5"> */}
-                <input onChange={handleFileChange} className={`text-black h-20 w-full border rounded-sm ${isFileError ? "border-red-500 border-2" : "border-black "}`} type="file" accept='image/*' id='file' name='file' />
+                {/* <div className='bg-gray-500/50 text-white flex justify-center items-center border-dashed border-4 border-white w-full min-h-25 rounded mb-3'> Import Your Image Here!</div> */}
+                <input onChange={handleFileChange} className={`text-black h-20 w-full border rounded-sm ${isFileError ? "border-red-500 border-2" : "border-black "}`} type="file" accept='image/*' id='icon' name='icon'  />
 
                 <Button type='submit' className=''>Upload</Button>
                 {/* </div> */}

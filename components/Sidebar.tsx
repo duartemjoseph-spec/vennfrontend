@@ -16,7 +16,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-72 rounded-3xl sticky top-0 max-h-screen bg-white border border-zinc-200 p-5 shadow-sm">
+    <aside className="w-full h-screen rounded-3xl bg-white border border-zinc-200 p-5 shadow-sm">
       <div className="mb-6">
         <div className="flex items-center gap-3">
           <Image

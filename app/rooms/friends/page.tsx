@@ -10,12 +10,15 @@ import {
   CalendarDays,
   UserRoundPlus,
   Check,
+  X,
 } from "lucide-react";
 import {
   acceptFriendRequest,
+  declineFriendInvite,
   getAcceptedFriends,
   getPendingFriends,
   getUserId,
+  getUsername,
 } from "@/lib/api";
 
 type UserInfo = {
@@ -55,9 +58,11 @@ export default function FriendsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentUserId, setCurrentUserId] = useState(0);
+  const [currentUsername, setCurrentUsername] = useState("")
 
   useEffect(() => {
     setCurrentUserId(Number(getUserId() || 0));
+    setCurrentUsername(getUsername() || "" )
   }, []);
 
   async function loadFriends(userId: number) {
@@ -106,6 +111,7 @@ export default function FriendsPage() {
   async function handleAcceptFriend(requesterId: number, receiverId: number) {
     try {
       await acceptFriendRequest(requesterId, receiverId);
+      
       loadFriends(currentUserId);
     } catch (error) {
       if (error instanceof Error) {
@@ -114,6 +120,20 @@ export default function FriendsPage() {
         setErrorMessage("Could not accept friend request.");
       }
     }
+  }
+  const handleRemoveRequest = async (requesterId: number, receiverId: number) => {
+      try{
+        await declineFriendInvite(requesterId, receiverId);
+        console.log("")
+        loadFriends(currentUserId);
+      }
+      catch (error){
+        if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Could not accept friend request.");
+      }
+      }
   }
 
   const pendingCount = pendingFriends.length;
@@ -141,7 +161,7 @@ export default function FriendsPage() {
 
           <div className="rounded-2xl bg-blue-500 p-5 text-white shadow-sm">
             <p className="text-sm opacity-90">Current User</p>
-            <p className="mt-2 text-3xl font-bold">{currentUserId || 0}</p>
+            <p className="mt-2 text-2xl font-semibold">{currentUsername}</p>
           </div>
         </div>
 
@@ -309,15 +329,25 @@ export default function FriendsPage() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() =>
-                        handleAcceptFriend(friend.requesterId, friend.receiverId)
-                      }
-                      className="inline-flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-600"
-                    >
-                      <Check size={16} />
-                      Accept
-                    </button>
+                    <div className="flex gap-4">
+                      <button
+                      onClick={() => handleRemoveRequest(friend.requesterId, friend.receiverId)}
+                        className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600"
+                      >
+                        <X size={16} />
+                        Decline
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleAcceptFriend(friend.requesterId, friend.receiverId)
+                        }
+                        className="inline-flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-600"
+                      >
+
+                        <Check size={16} />
+                        Accept
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))

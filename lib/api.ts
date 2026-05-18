@@ -75,7 +75,7 @@ export const getUserByUserId = async (id: number) => {
   });
   const data = await response.json();
 
-  if (!response.ok){
+  if (!response.ok) {
     throw new Error(data.message || "Could not load user.")
   }
   return data;
@@ -102,7 +102,7 @@ export async function getAllUsers() {
 }
 
 // Get all rooms related to user!
-export async function getAllRooms(id: number ,token?: string) {
+export async function getAllRooms(id: number, token?: string) {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -208,10 +208,10 @@ export async function getMembersByRoomId(roomId: string) {
   return data;
 }
 export type RoomDTO = {
-  title : string,
+  title: string,
   category: string,
-  eventDate : string,
-  isRoomActive : boolean
+  eventDate: string,
+  isRoomActive: boolean
 
 }
 // Update room info by room id:
@@ -220,14 +220,13 @@ export const UpdateRoomByRoomId = async (roomId: number, updateRoomInfo: RoomDTO
   const res = await fetch(`${API_BASE}/Room/UpdateRoom/${roomId}`, {
     method: "PUT",
     headers: {
-      "Content-Type" : "application/json",
-      "Authorization" : `Bearer ${token}`
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
     },
-    body : JSON.stringify(updateRoomInfo)
+    body: JSON.stringify(updateRoomInfo)
   })
 
-  if(res.ok)
-  {
+  if (res.ok) {
     const data = res.json();
     return data;
   }
@@ -482,14 +481,14 @@ export const deleteRoomByRoomId = async (roomId: number) => {
   const res = await fetch(`${API_BASE}/Room/DeleteRoomById/${roomId}`, {
     method: "PUT",
     headers: {
-      "content-type" : "application/json",
-      "authorization" : `Bearer ${token}`
+      "content-type": "application/json",
+      "authorization": `Bearer ${token}`
     }
 
   });
-  if(res.ok){
+  if (res.ok) {
     const data = await res.text();
-    return  data === "true" || data;
+    return data === "true" || data;
   }
   const data = await res.text()
   console.log(data);
@@ -499,7 +498,7 @@ export const deleteRoomByRoomId = async (roomId: number) => {
 
 // Function to GET Pending list!
 export const getPendingRoomInvites = async (userId: number) => {
-  const res = await fetch(`${API_BASE}/RoomMember/GetUserInvitationByUserId/${userId}`,{
+  const res = await fetch(`${API_BASE}/RoomMember/GetUserInvitationByUserId/${userId}`, {
     cache: "no-cache"
   })
   if (!res.ok) {
@@ -515,23 +514,40 @@ export const declineRoomInvite = async (roomId: number, memberId: number) => {
   const res = await fetch(`${API_BASE}/RoomMember/RemoveMemberFromRoom`, {
     method: "PUT",
     headers: {
-      "Content-Type" : "application/json",
+      "Content-Type": "application/json",
 
     },
     body: JSON.stringify({
-        roomModelId : roomId,
-        memberId : memberId
+      roomModelId: roomId,
+      memberId: memberId
     })
   })
 
-  if(res.ok)
-  {
+  if (res.ok) {
     console.log(res);
     const data = await res.json();
     console.log(data);
     return true;
   }
   return false;
+}
+
+export const declineFriendInvite = async (requesterId: number, receiverId: number) => {
+  const res = await fetch(`${API_BASE}/Friend/DenyFriendRequestByRequestId/${requesterId}/${receiverId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (res.ok) {
+    const data = await res.text();
+    console.log(data);
+    return data;
+  }
+  const data = await res.text();
+  console.log(data)
+  return data;
 }
 
 // local storage helpers
@@ -552,7 +568,8 @@ export function saveUsername(username: string) {
 }
 
 export function getUsername() {
-  return localStorage.getItem("vennUsername");
+  if (typeof window !== undefined)
+    return localStorage.getItem("vennUsername");
 }
 
 export function clearUsername() {

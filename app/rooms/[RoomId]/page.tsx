@@ -50,6 +50,13 @@ type RoomMember = {
   userIcon?: string | null;
   availability?: AvailabilityItem[];
 };
+type HostData = {
+  userId: number,
+  username: string,
+  description: string,
+  userIcon: string,
+  availability?: AvailabilityItem[];
+}
 
 type SlotState = "empty" | "busy" | "maybe" | "available";
 
@@ -61,6 +68,7 @@ export default function RoomDetailPage() {
 
   const [room, setRoom] = useState<RoomData | null>(null);
   const [members, setMembers] = useState<RoomMember[]>([]);
+  const [hostData, setHostData] = useState<HostData | null>(null)
   const [currentUserId, setCurrentUserId] = useState(0);
 
   const [mySlots, setMySlots] = useState<Record<number, SlotState>>({});
@@ -92,8 +100,10 @@ export default function RoomDetailPage() {
       const roomData = await getRoomById(roomId, token || undefined);
       const memberData = await getMembersByRoomId(roomId);
       setRoom(roomData);
+      setHostData(roomData.userModel)
       setMembers(memberData || []);
       setHostId(roomData.userId)
+
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -104,7 +114,7 @@ export default function RoomDetailPage() {
       setIsLoading(false);
     }
   }
-
+  console.log(hostData)
   useEffect(() => {
     loadRoomPage();
   }, [params.RoomId]);
@@ -263,7 +273,7 @@ export default function RoomDetailPage() {
 
   return (
     <Container>
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-6xl ">
         <div className="mb-6">
           <button
             onClick={() => router.push("/rooms")}
@@ -453,6 +463,18 @@ export default function RoomDetailPage() {
                       }}
                     >
                       <div className="p-4" />
+                      {/* <div className="flex flex-col items-center gap-2 p-4">
+                        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-200">
+                          {
+                            hostData?.userIcon ? (
+                              <img className="h-full w-full object-cover" src={hostData?.userIcon} alt={hostData?.username || "User"} />
+                            ) : (
+                              <UserRound size={18} className="text-zinc-700" />
+                            )
+                          }
+                        </div>
+                        <p className="text-sm font-medium text-zinc-700">{hostData?.username}</p>
+                      </div> */}
                       {members.map((member, index) => (
                         <div
                           key={member.userId ?? member.userModelId ?? index}
@@ -487,6 +509,15 @@ export default function RoomDetailPage() {
                         <div className="p-4 text-sm font-medium text-zinc-700">
                           {formatHour(hour)}
                         </div>
+                        {/* {
+                          <div
+                            key={`${hostData?.userId ?? 1}-${hour}`}
+                            className="p-2"
+                          >
+                            <div
+                              className={`h-10 rounded-xl ${getStatusClass()}`} />
+                          </div>
+                        } */}
 
                         {members.map((member, index) => {
                           const memberId = Number(
@@ -532,19 +563,27 @@ export default function RoomDetailPage() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
+
                 <div className="rounded-2xl bg-zinc-50 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Room ID
+                    Host Name
                   </p>
-                  <p className="mt-2 text-zinc-900">{room.roomId}</p>
+                  <p className="mt-2 text-zinc-900">{hostData?.username ?? "Name not found"}</p>
+                </div>
+                <div className="rounded-2xl bg-zinc-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                    Room Title
+                  </p>
+                  <p className="mt-2 text-zinc-900">{room.title}</p>
                 </div>
 
                 <div className="rounded-2xl bg-zinc-50 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    Created By User
+                    Users Joined
                   </p>
-                  <p className="mt-2 text-zinc-900">{room.userId}</p>
+                  <p className="mt-2 text-zinc-900">{members.length}</p>
                 </div>
+
               </div>
             </div>
           </>

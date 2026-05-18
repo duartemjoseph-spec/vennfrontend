@@ -150,9 +150,8 @@ export default function RoomDetailPage() {
 
   function formatDate(dateString?: string) {
     if (!dateString) return "No date set";
-    console.log(dateString)
-    const date = new Date(dateString + "T00:00:00");
-    console.log(date)
+
+    const date = new Date(dateString);
 
     return date.toLocaleString("en-US", {
       weekday: "long",

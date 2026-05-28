@@ -8,7 +8,6 @@ the function name: getUserByUserId(id: number)
 Bugs List:
 Lets Change the logic where inviting users to rooms list should EXCLUDE the HOST of the room and current User Members!
 
-
 Notes for rooms page when user enters a specific room:
     Within the main card, display the host user's name and Icon within the top card!
 
@@ -19,7 +18,6 @@ Notes for rooms page when user enters a specific room:
 
     display availability of course ([JD] availability now shows up for each user in the room.)
 
-    New bugs 5/28: the size of the main content when selecting Friends, Rooms, Profile and My Schedule are not consistent! 
 
 
 ## Hosted Link!

@@ -28,7 +28,7 @@ export default function Container({ children }: { children: React.ReactNode }) {
           onClick={() => setIsOpen(false)}
         />
       )}
-      <main className="flex-1 rounded-3xl border border-zinc-200 bg-zinc-50 p-6 pt-20 md:pt-6">
+      <main className="flex-1 lg:w-[60vw] xl:w-[80vw] rounded-3xl border border-zinc-200 bg-zinc-50 p-6 pt-20 md:pt-6">
         {children}
       </main>
       </div>

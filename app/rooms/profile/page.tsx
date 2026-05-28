@@ -207,8 +207,8 @@ export default function ProfilePage() {
   return (
     <Container>
       <div className="mx-auto max-w-4xl">
-        <div className="mb-4">
-          <h1 className="text-3xl font-bold text-zinc-900 pt-12">Profile</h1>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-zinc-900">Profile</h1>
           <p className="mt-1 text-sm text-zinc-500">
             Manage your account settings and preferences.
           </p>

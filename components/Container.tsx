@@ -18,7 +18,7 @@ export default function Container({ children }: { children: React.ReactNode }) {
           {isOpen ? <X className="text-black" /> : <Menu className="text-black" />}
         </button>
       </div>
-      <div className={`fixed md:static z-40 h-full w-72 shrink-0 transition-transform ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      <div className={`fixed md:static z-40 h-full w-72 shrink-0 transition-transform ${isOpen ? "translate-x-0" : "-translate-x-[120%]"} md:translate-x-0`}
       >
         <Sidebar />
       </div>

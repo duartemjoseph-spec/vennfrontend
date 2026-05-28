@@ -19,6 +19,8 @@ Notes for rooms page when user enters a specific room:
 
     display availability of course ([JD] availability now shows up for each user in the room.)
 
+    New bugs 5/28: the size of the main content when selecting Friends, Rooms, Profile and My Schedule are not consistent! 
+
 
 ## Hosted Link!
 https://venn-iota.vercel.app/

@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useEffect, useState } from "react";
 import Container from "@/components/Container";
-import { Mail, UserRound, Pencil, CalendarDays, Divide, Camera } from "lucide-react";
+import { Mail, UserRound, Pencil, CalendarDays, Camera } from "lucide-react";
 import { getToken, getUsername, UserProfile, updateUserProfileById, getUserId, getUserByUserId } from "@/lib/api";
 import BlobModal from "@/components/BlobModal";
 
@@ -36,9 +36,7 @@ export default function ProfilePage() {
   const [emailUpdate, setEmailUpdate] = useState("")
   const [bioUpdate, setBioUpdate] = useState("")
 
-
   const formatMonthYear = (date: string) => {
-
     const d = new Date(date);
     return d.toLocaleDateString("en-US", {
       month: 'long',
@@ -59,21 +57,17 @@ export default function ProfilePage() {
   }
 
   const handleProfileUpdate = async () => {
-    // First validate user's inputted data: if name or email is empty! (create an boolInputError)
     try{
-
-    
-    if (nameUpdate == "") {
+    if (nameUpdate.trim() === "") {
       setBoolInputNameError(true)
       setInputErrorMessage("Please Input a Name before Saving Changes")
       // update new error bool and create error message below name input in a red border with red text!
     }
-    else if (emailUpdate == "") {
+    else if (emailUpdate.trim() === "") {
       setBoolInputEmailError(true)
       setInputErrorMessage("Please Input a valid Email before Saving Changes")
     }
     else {
-      // lets update our profile!
       let userIcon: string | undefined = user?.userIcon;
       if (uploadedImage != undefined || uploadedImage != null) {
         if (uploadedImage.length > 2)
@@ -89,9 +83,7 @@ export default function ProfilePage() {
       }
   
       const updateResponse = await updateUserProfileById(user?.userId!, updateUser,)
-      // const updateResponse = null;
       if (updateResponse != null) {
-        // setUser(updateResponse);
         loadUser();
         setBoolEditProfileMode(false);
         setUploadedImage(undefined);
@@ -100,7 +92,6 @@ export default function ProfilePage() {
       else {
         setErrorUpdateMessage("Error: Unable to Update your Profile!")
       }
-
     }
   }
   catch(error)
@@ -113,12 +104,24 @@ export default function ProfilePage() {
       setIsBlobModalOpen(true)
     }
   }
+  //this will run when user clicks to edit and cancel edit!
+  const handleEditProfileMode = () => {
+    if(!boolEditProfileMode)
+    {
+      setNameUpdate(user?.username || "Name not found!");
+      setEmailUpdate(user?.email || "No email found!");
+      setBioUpdate(user?.description || "");
+      setBoolInputEmailError(false);
+      setBoolInputNameError(false);
+    }
+    setBoolEditProfileMode(!boolEditProfileMode)
+  }
+
   async function loadUser() {
     try {
       const token = getToken();
       const username = getUsername();
       const userId = getUserId();
-
 
       if (!token || !username) {
         setErrorMessage("You need to log in first.");
@@ -126,7 +129,6 @@ export default function ProfilePage() {
         return;
       }
 
-      // const data = await getUserByUsername(username);
       const data = await getUserByUserId(parseInt(userId!));
       setUser(data);
       setNameUpdate(data?.username)
@@ -143,7 +145,6 @@ export default function ProfilePage() {
       }
       else{
         setBoolUserIcon(false)
-        // setDisplayUserIcon
       }
       setCreationDate(data.accountCreated)
 
@@ -163,13 +164,12 @@ export default function ProfilePage() {
     setDisplayUserIcon(undefined);
   }, []);
 
-
   useEffect(() => {
     if (uploadedImage != undefined || uploadedImage != null) {
       setDisplayUserIcon(uploadedImage);
     }
-
   }, [uploadedImage])
+
   useEffect(() => {
     if(!boolEditProfileMode)
       setDisplayUserIcon(user?.userIcon)
@@ -207,7 +207,7 @@ export default function ProfilePage() {
   return (
     <Container>
       <div className="mx-auto max-w-4xl">
-        <div className="mb-6">
+        <div className="mb-4">
           <h1 className="text-3xl font-bold text-zinc-900">Profile</h1>
           <p className="mt-1 text-sm text-zinc-500">
             Manage your account settings and preferences.
@@ -225,7 +225,6 @@ export default function ProfilePage() {
             {errorUpdateMessage}
           </div>
         )}
-
         
         <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
           <div className="h-18 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400" />
@@ -262,11 +261,11 @@ export default function ProfilePage() {
               {
                 boolEditProfileMode ?
                   <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <button onClick={() => setBoolEditProfileMode(false)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2 text-xs sm:text-sm">Cancel</button>
-                    <button onClick={handleProfileUpdate} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-x1 bg-purple-600 px-3 py-2 text-xs sm:text-sm">Save Changes</button>
+                    <button onClick={handleEditProfileMode} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 px-3 py-2 text-xs sm:text-sm">Cancel</button>
+                    <button onClick={handleProfileUpdate} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-x1 bg-purple-600 rounded-xl px-3 py-2 text-xs sm:text-sm">Save Changes</button>
                   </div>
                   :
-                  <button onClick={() => setBoolEditProfileMode(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 hover:bg-purple-600 px-3 py-2 text-xs sm:text-sm">
+                  <button onClick={handleEditProfileMode} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-purple-500 hover:bg-purple-600 px-3 py-2 text-xs sm:text-sm">
                     <Pencil size={16} />
                     Edit Profile
                   </button>
@@ -280,12 +279,11 @@ export default function ProfilePage() {
                 </p>
                 {boolEditProfileMode ?
                   <div>
-
-                    <input type="text" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputNameError ? "border border-red-500" : ""} `} value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
-                    {boolInputNameError ?
+                    <input type="text" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputNameError && "border border-red-500"} `} value={nameUpdate} onChange={(e) => handleNameUpdate(e)} />
+                    {boolInputNameError &&
                       <div>
                         <p className="text-red-500">{inputErrorMessage}</p>
-                      </div> : ""}
+                      </div>}
                   </div>
                   :
                   <p className="mt-1 text-zinc-900">
@@ -299,16 +297,14 @@ export default function ProfilePage() {
                   Email
                 </p>
 
-                {
-                  boolEditProfileMode ?
+                {boolEditProfileMode ?
                     <div>
-                      <input type="email" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError ? "border border-red-500" : ""} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
-                      {boolInputEmailError ?
+                      <input type="email" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError && "border border-red-500"} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                      {boolInputEmailError &&
                         <div>
-                          <p className="text-red-500">{inputErrorMessage} MKay?</p>
-                        </div> : ""}
+                          <p className="text-red-500">{inputErrorMessage}</p>
+                        </div>}
                     </div>
-
                     :
                     <div className="mt-1 flex items-center gap-2 text-zinc-900">
                       <Mail size={16} className="text-zinc-400" />
@@ -321,13 +317,11 @@ export default function ProfilePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Bio
                 </p>
-                {
-                  boolEditProfileMode ?
+                {boolEditProfileMode ?
                     <input type="text" className='w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ' value={bioUpdate} onChange={(e) => handleBioUpdate(e)} />
                     :
                     <p className="mt-1 text-zinc-700">{user?.description == "" ? "No bio has been added!" : user?.description}</p>
                 }
-                {/* <p className="mt-1 text-zinc-700">{user?.description ?? "No bio has been added!"}</p> */}
               </div>
             </div>
           </div>
@@ -355,7 +349,6 @@ export default function ProfilePage() {
         onClose={() => setIsBlobModalOpen(false)}
         uploadImage={uploadedImage}
         setUploadImage={setUploadedImage}
-
       />
     </Container>
   );

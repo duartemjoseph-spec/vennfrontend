@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import UpdateRoomModal from "@/components/UpdateRoomModal";
 import DeleteModal from "@/components/DeleteModal";
+import { limitString } from "@/lib/helperFunctions";
 
 type AvailabilityItem = {
   day: number | string;
@@ -407,7 +408,7 @@ export default function RoomDetailPage() {
 
                       <div>
                         <p className="font-medium text-zinc-900">
-                          {member.username || "Member"}
+                          {limitString(member.username) || "Member"}
                         </p>
                         <p className="text-sm text-zinc-500">
                           {member.email || `User ID: ${member.userId ?? member.userModelId ?? "N/A"}`}
@@ -492,7 +493,7 @@ export default function RoomDetailPage() {
                             )}
                           </div>
                           <p className="text-sm font-medium text-zinc-900">
-                            {member.username || "Member"}
+                            {limitString(member.username) || "Member"}
                           </p>
                         </div>
                       ))}

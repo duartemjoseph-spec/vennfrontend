@@ -6,6 +6,7 @@ import CreateRoomModal from "@/components/CreateRoomModal";
 import { acceptRoomInvite, declineRoomInvite, getAcceptedFriends, getAllRooms, getPendingRoomInvites, getToken, getUserId } from "@/lib/api";
 import { Calendar, UserRound, UsersRound } from "lucide-react";
 import { Button } from "flowbite-react";
+import { limitString } from "@/lib/helperFunctions";
 
 type RoomData = {
   roomId: number;
@@ -133,7 +134,7 @@ export default function RoomsPage() {
     <Container>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Rooms</h1>
+          <h1 className="text-3xl font-bold text-zinc-900">Rooms</h1>
           <p className="mt-1 text-sm text-zinc-500">
             View your rooms and jump into scheduling.
           </p>
@@ -178,7 +179,7 @@ export default function RoomsPage() {
           </div>
           <div className="">
             {/* create boolean and check if user has pending invites */}
-            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 ? `Pending Room Invites: ${pendingRoomInvite.length}` : ""}</h2>
+            <h2 className="text-zinc-500 text-sm pb-2">{pendingRoomInvite.length > 0 && `Pending Room Invites: ${pendingRoomInvite.length}`}</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4">
               {
@@ -201,7 +202,7 @@ export default function RoomsPage() {
                           
                         
                       </div>
-                      <p className="text-sm">Room Host: {invite.requesterName}</p>
+                      <p className="text-sm">Room Host: {limitString(invite.requesterName)}</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-2 pt-4">

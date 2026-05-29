@@ -167,13 +167,13 @@ export default function RoomsPage() {
 
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <Calendar size={42} className="text-purple-600 bg-purple-200 border-10 border-purple-200 rounded-lg" />
-              <h5 className="font-bold text-zinc-900 text-lg pt-2">{rooms.length}</h5>
+              <h5 className="font-bold text-zinc-900 text-lg md:text-2xl pt-2">{rooms.length}</h5>
               <p className="text-zinc-900 text-xs">Active Rooms</p>
             </div>
 
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <UsersRound size={42} className="text-green-600 bg-green-200 border-10 border-green-200 rounded-lg" />
-              <h5 className="font-bold text-zinc-900 text-lg pt-2">{friends.length}</h5>
+              <h5 className="font-bold text-zinc-900 text-lg md:text-2xl pt-2">{friends.length}</h5>
               <p className="text-zinc-900 text-xs">Friends</p>
             </div>
           </div>

@@ -10,7 +10,7 @@ export default function Container({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-100 flex justify-center py-5">
         <div className={`md:[mx-auto flex max-w-7xl gap-6 px-6 py-6]`} >
-      <div className={`fixed md:hidden top-4 z-50 transition-all duration-300 ${isOpen ? " left-[240px]" : "left-4"}`}>
+      <div className={`fixed md:hidden top-4 z-50 transition-all duration-300 ${isOpen ? "left-[240px]" : "left-4"}`}>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 rounded-md bg-zinc-200"

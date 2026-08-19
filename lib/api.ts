@@ -1,5 +1,7 @@
 const API_BASE =
-  "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
+// "https://vennbackendapi-akghachgbhgdccfe.westus3-01.azurewebsites.net"
+// "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
+"http://localhost:5131"
 
 // Create account
 export async function createUser(
@@ -7,7 +9,7 @@ export async function createUser(
   email: string,
   password: string
 ) {
-  const res = await fetch(`${API_BASE}/User/CreateUser`, {
+  const res = await fetch(`${API_BASE}/Auth/CreateUser`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +35,7 @@ export async function createUser(
 
 // Login
 export async function loginUser(username: string, password: string) {
-  const res = await fetch(`${API_BASE}/User/Login`, {
+  const res = await fetch(`${API_BASE}/Auth/Login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -55,9 +57,14 @@ export async function loginUser(username: string, password: string) {
 }
 
 // Get user by username
-export async function getUserByUsername(username: string) {
-  const res = await fetch(`${API_BASE}/User/GetUserByUsername/${username}`, {
+export async function getUserByUsername(username: string, token: string) {
+  const res = await fetch(`${API_BASE}/User/GetUserByUsername?username=${username}`, {
     cache: "no-store",
+    method: "GET",
+    headers: {
+      "Content-Type": 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
   });
 
   const text = await res.text();
@@ -70,8 +77,13 @@ export async function getUserByUsername(username: string) {
   return data;
 }
 export const getUserByUserId = async (id: number) => {
-  const response = await fetch(`${API_BASE}/User/GetUserById/${id}`, {
-    cache: "no-store"
+  const token = getToken();
+  const response = await fetch(`${API_BASE}/User/GetById?id=${id}`, {
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
   });
   const data = await response.json();
 

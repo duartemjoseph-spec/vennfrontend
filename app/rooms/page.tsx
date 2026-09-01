@@ -9,7 +9,7 @@ import { Button } from "flowbite-react";
 import { limitString } from "@/lib/helperFunctions";
 
 type RoomData = {
-  roomId: number;
+  id: number;
   title?: string;
   category?: string;
   eventDate?: string;
@@ -231,7 +231,7 @@ export default function RoomsPage() {
         <div className="space-y-4">
           {rooms.map((room) => (
             <div
-              key={room.roomId}
+              key={room.id}
               className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -248,7 +248,7 @@ export default function RoomsPage() {
                 </div>
 
                 <a
-                  href={`/rooms/${room.roomId}`}
+                  href={`/rooms/${room.id}`}
                   className="inline-flex items-center justify-center rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-600"
                 >
                   Go To Room

@@ -1,8 +1,12 @@
 
 // VENN API link
-const url = "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
+const url = 
+// "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
+"https://vennbackendapi-akghachgbhgdccfe.westus3-01.azurewebsites.net";
+// "http://localhost:5131"
 
-const blobUrl = "https://csablobdaniel.blob.core.windows.net/dbhbloglecture";
+const blobUrl = 
+"https://vennblobstorage.blob.core.windows.net/vennblobimages";
 
 export const fetchBlob = async (params: FormData) => {
     const response = await fetch(url + "/blob/uploadfile", {
@@ -21,8 +25,6 @@ export const fetchBlob = async (params: FormData) => {
 
         return uploadFileUrl; // this string will be saved into our database!
     }else{
-        
-        console.log("Our file did not upload!")
         return null;
     }
 }

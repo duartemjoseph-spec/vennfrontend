@@ -19,6 +19,10 @@ Notes for rooms page when user enters a specific room:
     display availability of course ([JD] availability now shows up for each user in the room.)
 
 
+8/31/2026 Daniel H. :updating API link to my new hosted API redone based on what I've learned from the academy and internship as a whole
+This API is still in development but now has funtionality towards most of our core features other than User's Availability!
+    I will get Availability function operational before end of this week!
+
 
 ## Hosted Link!
 https://venn-iota.vercel.app/

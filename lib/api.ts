@@ -1,5 +1,7 @@
 const API_BASE =
-  "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
+"https://vennbackendapi-akghachgbhgdccfe.westus3-01.azurewebsites.net"
+// "https://venngroupapi-emashqggf5gphwax.westus3-01.azurewebsites.net";
+// "http://localhost:5131"
 
 // Create account
 export async function createUser(
@@ -7,7 +9,7 @@ export async function createUser(
   email: string,
   password: string
 ) {
-  const res = await fetch(`${API_BASE}/User/CreateUser`, {
+  const res = await fetch(`${API_BASE}/Auth/CreateUser`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +35,7 @@ export async function createUser(
 
 // Login
 export async function loginUser(username: string, password: string) {
-  const res = await fetch(`${API_BASE}/User/Login`, {
+  const res = await fetch(`${API_BASE}/Auth/Login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -55,9 +57,14 @@ export async function loginUser(username: string, password: string) {
 }
 
 // Get user by username
-export async function getUserByUsername(username: string) {
-  const res = await fetch(`${API_BASE}/User/GetUserByUsername/${username}`, {
+export async function getUserByUsername(username: string, token: string) {
+  const res = await fetch(`${API_BASE}/User/GetUserByUsername?username=${username}`, {
     cache: "no-store",
+    method: "GET",
+    headers: {
+      "Content-Type": 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
   });
 
   const text = await res.text();
@@ -70,8 +77,13 @@ export async function getUserByUsername(username: string) {
   return data;
 }
 export const getUserByUserId = async (id: number) => {
-  const response = await fetch(`${API_BASE}/User/GetUserById/${id}`, {
-    cache: "no-store"
+  const token = getToken();
+  const response = await fetch(`${API_BASE}/User/GetById?id=${id}`, {
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
   });
   const data = await response.json();
 
@@ -83,10 +95,12 @@ export const getUserByUserId = async (id: number) => {
 
 // Get all users
 export async function getAllUsers() {
+  const token = getToken();
   const res = await fetch(`${API_BASE}/User/GetAllUsers`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
     },
     cache: "no-store",
   });
@@ -110,7 +124,7 @@ export async function getAllRooms(id: number, token?: string) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-
+// GetCreatedAndJoinedRoomsByUserId
   const res = await fetch(`${API_BASE}/Room/GetCreatedAndJoinedRoomsByUserId/${id}`, {
     method: "GET",
     headers,
@@ -171,8 +185,9 @@ export async function getRoomById(roomId: string, token?: string) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
+  console.log(headers);
 
-  const res = await fetch(`${API_BASE}/Room/GetRoomByRoomId/${roomId}`, {
+  const res = await fetch(`${API_BASE}/Room/GetRoomById/${roomId}`, {
     method: "GET",
     headers,
     cache: "no-store",
@@ -373,7 +388,7 @@ export async function acceptFriendRequest(
   receiverId: number
 ) {
   const res = await fetch(
-    `${API_BASE}/Friend/AddFriendStatusByColumnId/${requesterId}/${receiverId}`,
+    `${API_BASE}/Friend/AddFriendStatus/${requesterId}/${receiverId}`,
     {
       method: "PUT",
       headers: {
@@ -453,7 +468,7 @@ export const updateUserProfileById = async (id: number, updatedUser: UserProfile
 
   const token = getToken();
 
-  const response = await fetch(`${API_BASE}/Profile/UpdateUserProfileByUserId/${id}`,
+  const response = await fetch(`${API_BASE}/User/UpdateUserProfile`,
     {
       method: "PUT",
       headers: {

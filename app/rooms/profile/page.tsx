@@ -299,7 +299,7 @@ export default function ProfilePage() {
 
                 {boolEditProfileMode ?
                     <div>
-                      <input type="email" className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError && "border border-red-500"} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
+                      <input type="email" readOnly className={`w-full min-h-[42px] rounded-lg text-sm p-3 text-zinc-900 bg-gray-200 ${boolInputEmailError && "border border-red-500"} `} value={emailUpdate} onChange={(e) => handleEmailUpdate(e)} />
                       {boolInputEmailError &&
                         <div>
                           <p className="text-red-500">{inputErrorMessage}</p>

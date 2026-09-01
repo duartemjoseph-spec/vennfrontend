@@ -57,7 +57,7 @@ export default function Home() {
       saveToken(token);
       saveUsername(loginUsername);
 
-      const userInfo = await getUserByUsername(loginUsername, token);
+      const userInfo = await getUserByUsername(loginUsername, data.token);
       const userId =
         userInfo?.userId || userInfo?.UserId || userInfo?.id || userInfo?.Id;
 

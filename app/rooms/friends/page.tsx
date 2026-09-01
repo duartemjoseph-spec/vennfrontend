@@ -230,12 +230,12 @@ export default function FriendsPage() {
         {!isLoading && selectedTab === "accepted" && (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredAccepted.length > 0 ? (
-              filteredAccepted.map((friend) => {
+              filteredAccepted.map((friend, idx) => {
                 const otherUser = getOtherUser(friend, currentUserId);
 
                 return (
                   <div
-                    key={friend.id}
+                    key={idx}
                     className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
                   >
                     <div className="mb-3 flex items-start justify-between gap-3">
@@ -297,9 +297,9 @@ export default function FriendsPage() {
         {!isLoading && selectedTab === "pending" && (
           <div className="space-y-4">
             {pendingFriends.length > 0 ? (
-              pendingFriends.map((friend) => (
+              pendingFriends.map((friend, idx) => (
                 <div
-                  key={friend.id}
+                  key={idx}
                   className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

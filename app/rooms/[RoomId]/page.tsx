@@ -410,9 +410,6 @@ export default function RoomDetailPage() {
                         <p className="font-medium text-zinc-900">
                           {limitString(member.username) || "Member"}
                         </p>
-                        <p className="text-sm text-zinc-500">
-                          {member.email || `User ID: ${member.userId ?? member.userModelId ?? "N/A"}`}
-                        </p>
                       </div>
                     </div>
                   ))}

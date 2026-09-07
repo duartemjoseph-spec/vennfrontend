@@ -45,12 +45,17 @@ type RoomMember = {
   roomModelId?: number;
   userModelId?: number;
   isAccepted?: boolean;
-  userId?: number;
+  memberId?: number;
+  memberInfo? : MemberInfo
+};
+
+type MemberInfo
+= {
   username?: string;
   email?: string;
   userIcon?: string | null;
   availability?: AvailabilityItem[];
-};
+}
 type HostData = {
   userId: number,
   username: string,
@@ -100,8 +105,10 @@ export default function RoomDetailPage() {
 
       const roomData = await getRoomById(roomId, token || undefined);
       const memberData = await getMembersByRoomId(roomId);
+      console.log(roomData);
+      console.log(memberData);
       setRoom(roomData);
-      setHostData(roomData.userModel)
+      setHostData(roomData.user)
       setMembers(memberData || []);
       setHostId(roomData.userId)
 
@@ -115,21 +122,21 @@ export default function RoomDetailPage() {
       setIsLoading(false);
     }
   }
-  console.log(hostData)
+
   useEffect(() => {
     loadRoomPage();
   }, [params.RoomId]);
 
   const existingMemberIds = useMemo(() => {
     return members
-      .map((member) => member.userId || member.userModelId || 0)
+      .map((member) => member.memberId || member.userModelId || 0)
       .filter((id) => id > 0);
   }, [members]);
 
   const myMember = useMemo(() => {
     return members.find(
       (member) =>
-        Number(member.userId || member.userModelId || 0) === Number(currentUserId)
+        Number( member.userModelId || 0) === Number(currentUserId)
     );
   }, [members, currentUserId]);
 
@@ -142,7 +149,7 @@ export default function RoomDetailPage() {
       nextSlots[hour] = "empty";
     });
 
-    (myMember.availability || []).forEach((slot) => {
+    (myMember.memberInfo?.availability || []).forEach((slot) => {
       nextSlots[slot.hour] = backendStatusToSlotState(slot.status);
     });
 
@@ -153,14 +160,15 @@ export default function RoomDetailPage() {
     if (!dateString) return "No date set";
 
     const date = new Date(dateString);
-
+    console.log(date);
     return date.toLocaleString("en-US", {
       weekday: "long",
       month: "long",
       day: "numeric",
       year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+      // hour: "numeric",
+      // minute: "2-digit",
+      timeZone: 'UTC'
     });
   }
 
@@ -171,7 +179,7 @@ export default function RoomDetailPage() {
 
   function getRoomDayNumber() {
     if (!room?.eventDate) return null;
-    return new Date(room.eventDate).getDay();
+    return new Date(room.eventDate).getUTCDay();
   }
 
   function getRoomDayLabel() {
@@ -183,19 +191,19 @@ export default function RoomDetailPage() {
   }
 
   function getStatusForHour(member: RoomMember, hour: number) {
-    const memberId = Number(member.userId || member.userModelId || 0);
+    const memberId = Number(member.memberId || member.userModelId || 0);
 
     if (memberId === currentUserId) {
       return slotStateToBackendStatus(mySlots[hour] || "empty");
     }
 
-    return member.availability?.find((slot) => slot.hour === hour)?.status;
+    return member.memberInfo?.availability?.find((slot) => slot.hour === hour)?.status;
   }
 
-  function getStatusClass(status?: number) {
-    if (status === 2) return "bg-green-100 border border-green-300";
-    if (status === 1) return "bg-yellow-100 border border-yellow-300";
-    if (status === 0) return "bg-red-100 border border-red-300";
+  function getStatusClass(statusId?: number) {
+    if (statusId === 3) return "bg-green-100 border border-green-300";
+    if (statusId === 2) return "bg-yellow-100 border border-yellow-300";
+    if (statusId === 1) return "bg-red-100 border border-red-300";
     return "bg-white border border-zinc-200";
   }
 
@@ -391,14 +399,14 @@ export default function RoomDetailPage() {
                 <div className="grid gap-3 md:grid-cols-2">
                   {members.map((member, index) => (
                     <div
-                      key={member.userId ?? member.userModelId ?? index}
+                      key={member.memberId ?? member.userModelId ?? index}
                       className="flex items-center gap-3 rounded-2xl bg-zinc-50 p-4"
                     >
                       <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-zinc-200">
-                        {member.userIcon ? (
+                        {member.memberInfo?.userIcon ? (
                           <img
-                            src={member.userIcon}
-                            alt={member.username || "User"}
+                            src={member.memberInfo.userIcon}
+                            alt={member.memberInfo.username || "User"}
                             className="h-full w-full object-cover"
                           />
                         ) : (
@@ -408,7 +416,7 @@ export default function RoomDetailPage() {
 
                       <div>
                         <p className="font-medium text-zinc-900">
-                          {limitString(member.username) || "Member"}
+                          {limitString(member.memberInfo?.username) || "Member"}
                         </p>
                       </div>
                     </div>
@@ -475,14 +483,14 @@ export default function RoomDetailPage() {
                       </div> */}
                       {members.map((member, index) => (
                         <div
-                          key={member.userId ?? member.userModelId ?? index}
+                          key={member.memberId ?? member.userModelId ?? index}
                           className="flex flex-col items-center gap-2 p-4"
                         >
                           <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-200">
-                            {member.userIcon ? (
+                            {member.memberInfo?.userIcon ? (
                               <img
-                                src={member.userIcon}
-                                alt={member.username || "User"}
+                                src={member.memberInfo.userIcon}
+                                alt={member.memberInfo.username || "User"}
                                 className="h-full w-full object-cover"
                               />
                             ) : (
@@ -490,7 +498,7 @@ export default function RoomDetailPage() {
                             )}
                           </div>
                           <p className="text-sm font-medium text-zinc-900">
-                            {limitString(member.username) || "Member"}
+                            {limitString(member.memberInfo?.username) || "Member"}
                           </p>
                         </div>
                       ))}
@@ -519,14 +527,14 @@ export default function RoomDetailPage() {
 
                         {members.map((member, index) => {
                           const memberId = Number(
-                            member.userId || member.userModelId || 0
+                            member.memberId || member.userModelId || 0
                           );
                           const status = getStatusForHour(member, hour);
                           const isMyColumn = memberId === currentUserId;
 
                           return (
                             <div
-                              key={`${member.userId ?? member.userModelId ?? index}-${hour}`}
+                              key={`${member.memberId ?? member.userModelId ?? index}-${hour}`}
                               className="p-2"
                             >
                               {isMyColumn ? (
@@ -617,15 +625,15 @@ export default function RoomDetailPage() {
 }
 
 function backendStatusToSlotState(status?: number): SlotState {
-  if (status === 0) return "busy";
-  if (status === 1) return "maybe";
-  if (status === 2) return "available";
+  if (status === 1) return "busy";
+  if (status === 2) return "maybe";
+  if (status === 3) return "available";
   return "empty";
 }
 
 function slotStateToBackendStatus(state: SlotState) {
-  if (state === "busy") return 0;
-  if (state === "maybe") return 1;
-  if (state === "available") return 2;
+  if (state === "busy") return 1;
+  if (state === "maybe") return 2;
+  if (state === "available") return 3;
   return -1;
 }

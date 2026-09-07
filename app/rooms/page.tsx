@@ -123,10 +123,11 @@ export default function RoomsPage() {
 
     return date.toLocaleString("en-US", {
       weekday: "long",
-      month: "short",
+      month: "long",
       day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+      // hour: "numeric",
+      // minute: "2-digit",
+      timeZone: "UTC"
     });
   }
 

@@ -185,7 +185,6 @@ export async function getRoomById(roomId: string, token?: string) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  console.log(headers);
 
   const res = await fetch(`${API_BASE}/Room/GetRoomById/${roomId}`, {
     method: "GET",
@@ -410,7 +409,7 @@ export async function acceptFriendRequest(
 // Save weekly availability
 export async function createWeeklyAvailability(
   userId: number,
-  availability: { day: number; hour: number; status: number }[]
+  availability: { day: number; hour: number; statusId: number }[]
 ) {
   const res = await fetch(
     `${API_BASE}/UserAvailability/CreateWeeklyAvailabilityByUserId/${userId}`,
@@ -418,6 +417,7 @@ export async function createWeeklyAvailability(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`
       },
       body: JSON.stringify(availability),
     }
@@ -435,12 +435,15 @@ export async function createWeeklyAvailability(
 
 // Get weekly availability
 export async function getWeeklyAvailability(userId: number) {
+
+  const token = getToken();
   const res = await fetch(
     `${API_BASE}/UserAvailability/GetUserWeeklyAvailabilityByUserId/${userId}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       cache: "no-store",
     }

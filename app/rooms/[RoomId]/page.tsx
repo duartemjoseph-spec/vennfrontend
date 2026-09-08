@@ -29,15 +29,15 @@ import { limitString } from "@/lib/helperFunctions";
 type AvailabilityItem = {
   day: number | string;
   hour: number;
-  status: number;
+  statusId: number;
 };
 
 export type RoomData = {
-  roomId: number;
+  id: number;
   title?: string;
   category?: string;
   eventDate?: string;
-  isRoomActive: boolean;
+  isRoomActive?: boolean;
   userId: number;
 };
 
@@ -105,8 +105,6 @@ export default function RoomDetailPage() {
 
       const roomData = await getRoomById(roomId, token || undefined);
       const memberData = await getMembersByRoomId(roomId);
-      console.log(roomData);
-      console.log(memberData);
       setRoom(roomData);
       setHostData(roomData.user)
       setMembers(memberData || []);
@@ -129,14 +127,14 @@ export default function RoomDetailPage() {
 
   const existingMemberIds = useMemo(() => {
     return members
-      .map((member) => member.memberId || member.userModelId || 0)
+      .map((member) => member.memberId || 0)
       .filter((id) => id > 0);
   }, [members]);
 
   const myMember = useMemo(() => {
     return members.find(
       (member) =>
-        Number( member.userModelId || 0) === Number(currentUserId)
+        Number( member.memberId || 0) === Number(currentUserId)
     );
   }, [members, currentUserId]);
 
@@ -150,7 +148,7 @@ export default function RoomDetailPage() {
     });
 
     (myMember.memberInfo?.availability || []).forEach((slot) => {
-      nextSlots[slot.hour] = backendStatusToSlotState(slot.status);
+      nextSlots[slot.hour] = backendStatusToSlotState(slot.statusId);
     });
 
     setMySlots(nextSlots);
@@ -160,7 +158,6 @@ export default function RoomDetailPage() {
     if (!dateString) return "No date set";
 
     const date = new Date(dateString);
-    console.log(date);
     return date.toLocaleString("en-US", {
       weekday: "long",
       month: "long",
@@ -187,17 +184,17 @@ export default function RoomDetailPage() {
 
     return new Date(room.eventDate).toLocaleString("en-US", {
       weekday: "long",
+      timeZone: "UTC"
     });
   }
 
   function getStatusForHour(member: RoomMember, hour: number) {
     const memberId = Number(member.memberId || member.userModelId || 0);
-
+    
     if (memberId === currentUserId) {
       return slotStateToBackendStatus(mySlots[hour] || "empty");
     }
-
-    return member.memberInfo?.availability?.find((slot) => slot.hour === hour)?.status;
+    return member.memberInfo?.availability?.find((slot) => slot.hour === hour)?.statusId;
   }
 
   function getStatusClass(statusId?: number) {
@@ -254,14 +251,14 @@ export default function RoomDetailPage() {
         .map((hour) => ({
           day: roomDayNumber,
           hour,
-          status: slotStateToBackendStatus(mySlots[hour] || "empty"),
+          statusId: slotStateToBackendStatus(mySlots[hour] || "empty"),
         }));
 
       const finalPayload = [
         ...availabilityWithoutRoomDay.map((item: AvailabilityItem) => ({
           day: typeof item.day === "number" ? item.day : Number(item.day),
           hour: item.hour,
-          status: item.status,
+          statusId: item.statusId,
         })),
         ...updatedRoomDayAvailability,
       ];
@@ -524,7 +521,6 @@ export default function RoomDetailPage() {
                               className={`h-10 rounded-xl ${getStatusClass()}`} />
                           </div>
                         } */}
-
                         {members.map((member, index) => {
                           const memberId = Number(
                             member.memberId || member.userModelId || 0
@@ -600,7 +596,7 @@ export default function RoomDetailPage() {
         <InviteMemberModal
           isOpen={isInviteOpen}
           onClose={() => setIsInviteOpen(false)}
-          roomId={room.roomId}
+          roomId={room.id}
           existingMemberIds={existingMemberIds}
           onMemberInvited={loadRoomPage}
           hostId={hostId}
@@ -615,7 +611,7 @@ export default function RoomDetailPage() {
       />
 
       <DeleteModal
-        roomId={room?.roomId!}
+        roomId={room?.id!}
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
       />

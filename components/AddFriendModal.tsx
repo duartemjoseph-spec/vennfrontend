@@ -12,7 +12,7 @@ type AddFriendModalProps = {
 };
 
 type UserItem = {
-  userId?: number;
+  id?: number;
   username?: string;
   email?: string;
   userIcon?: string;
@@ -59,7 +59,7 @@ export default function AddFriendModal({
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const id = user.userId || 0;
+      const id = user.id || 0;
       const text = `${user.username || ""} ${user.email || ""}`.toLowerCase();
 
       if (id === currentUserId) return false;
@@ -133,8 +133,9 @@ export default function AddFriendModal({
       {!isLoading && (
         <div className="max-h-72 space-y-3 overflow-y-auto pr-1">
           {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => {
-              const id = user.userId || 0;
+            filteredUsers.map((user, idx) => {
+              console.log(user)
+              const id = user.id || idx;
               const sent = successId === id;
 
               return (

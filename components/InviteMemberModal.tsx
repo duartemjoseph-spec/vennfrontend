@@ -15,7 +15,7 @@ type InviteMemberModalProps = {
 };
 
 type UserItem = {
-  userId?: number;
+  id?: number;
   username?: string;
   email?: string;
   userIcon?: string;
@@ -60,7 +60,7 @@ export default function InviteMemberModal({
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const id = user.userId || 0;
+      const id = user.id || 0;
       const text = `${user.username || ""} ${user.email || ""}`.toLowerCase();
 
       if (existingMemberIds.includes(id) || id == hostId) return false;
@@ -131,7 +131,7 @@ export default function InviteMemberModal({
         <div className="max-h-72 space-y-3 overflow-y-auto pr-1">
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user) => {
-              const id = user.userId || 0;
+              const id = user.id || 0;
               const invited = successId === id;
 
               return (

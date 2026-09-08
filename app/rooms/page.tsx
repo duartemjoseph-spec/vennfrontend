@@ -49,7 +49,6 @@ export default function RoomsPage() {
       const friendList = await getAcceptedFriends(userId);
       setFriends(friendList)
       const invites = await getPendingRoomInvites(userId);
-      // console.log(invites);
       setPendingRoomInvite(invites)
 
     } catch (error) {

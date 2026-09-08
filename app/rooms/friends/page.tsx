@@ -124,7 +124,6 @@ export default function FriendsPage() {
   const handleRemoveRequest = async (requesterId: number, receiverId: number) => {
       try{
         await declineFriendInvite(requesterId, receiverId);
-        console.log("")
         loadFriends(currentUserId);
       }
       catch (error){

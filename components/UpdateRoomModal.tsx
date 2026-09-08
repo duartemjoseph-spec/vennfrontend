@@ -32,7 +32,7 @@ const UpdateRoomModal = ({ isOpen, onClose, roomModel, setRoomModel }: ModalProp
     const handleUpdate = async (e: React.SubmitEvent) => {
         e.preventDefault();
         setIsLoadingUpdate(true);
-        const id = roomModel!.roomId
+        const id = roomModel!.id
         console.log(titleUpdate + " : " + categoryUpdate + " : " + eventDateUpdate + " : ")
         // we will update title, category and EventDate!
         // add check if any values are empty!
@@ -41,7 +41,7 @@ const UpdateRoomModal = ({ isOpen, onClose, roomModel, setRoomModel }: ModalProp
             title: titleUpdate!,
             category: categoryUpdate!,
             eventDate: eventDateUpdate,
-            isRoomActive: true
+            // isRoomActive: true
         }
 
         // Call endpoint to update room info!

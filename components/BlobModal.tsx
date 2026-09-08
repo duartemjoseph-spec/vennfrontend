@@ -47,7 +47,6 @@ const BlobModal = ({ isOpen, onClose, uploadImage, setUploadImage }: BlobModalPr
 
         const uploadedBlobUrl = await fetchBlob(formData);
         if (uploadedBlobUrl) {
-            console.log('File has been uploaded this is the file path: ' + uploadedBlobUrl);
             setUploadImage(uploadedBlobUrl);
         }
         // from here we will save our url into our database!

@@ -185,7 +185,6 @@ export async function getRoomById(roomId: string, token?: string) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  console.log(headers);
 
   const res = await fetch(`${API_BASE}/Room/GetRoomById/${roomId}`, {
     method: "GET",
@@ -226,7 +225,7 @@ export type RoomDTO = {
   title: string,
   category: string,
   eventDate: string,
-  isRoomActive: boolean
+  isRoomActive?: boolean
 
 }
 // Update room info by room id:
@@ -251,14 +250,14 @@ export const UpdateRoomByRoomId = async (roomId: number, updateRoomInfo: RoomDTO
 }
 
 // Invite member to room
-export async function inviteMemberToRoom(roomModelId: number, memberId: number) {
+export async function inviteMemberToRoom(roomId: number, memberId: number) {
   const res = await fetch(`${API_BASE}/RoomMember/InviteMemberToRoom`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      roomModelId,
+      roomId,
       memberId,
       isAccepted: false,
     }),
@@ -302,7 +301,7 @@ export async function acceptRoomInvite(roomModelId: number, memberId: number) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      roomModelId,
+      roomId : roomModelId,
       memberId,
       isAccepted: true,
     }),
@@ -410,7 +409,7 @@ export async function acceptFriendRequest(
 // Save weekly availability
 export async function createWeeklyAvailability(
   userId: number,
-  availability: { day: number; hour: number; status: number }[]
+  availability: { day: number; hour: number; statusId: number }[]
 ) {
   const res = await fetch(
     `${API_BASE}/UserAvailability/CreateWeeklyAvailabilityByUserId/${userId}`,
@@ -418,6 +417,7 @@ export async function createWeeklyAvailability(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`
       },
       body: JSON.stringify(availability),
     }
@@ -435,12 +435,15 @@ export async function createWeeklyAvailability(
 
 // Get weekly availability
 export async function getWeeklyAvailability(userId: number) {
+
+  const token = getToken();
   const res = await fetch(
     `${API_BASE}/UserAvailability/GetUserWeeklyAvailabilityByUserId/${userId}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       cache: "no-store",
     }
@@ -533,15 +536,15 @@ export const declineRoomInvite = async (roomId: number, memberId: number) => {
 
     },
     body: JSON.stringify({
-      roomModelId: roomId,
+      roomId: roomId,
       memberId: memberId
     })
   })
 
   if (res.ok) {
-    console.log(res);
+  
     const data = await res.json();
-    console.log(data);
+   
     return true;
   }
   return false;
@@ -557,11 +560,11 @@ export const declineFriendInvite = async (requesterId: number, receiverId: numbe
 
   if (res.ok) {
     const data = await res.text();
-    console.log(data);
+
     return data;
   }
   const data = await res.text();
-  console.log(data)
+
   return data;
 }
 

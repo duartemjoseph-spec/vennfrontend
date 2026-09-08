@@ -45,7 +45,7 @@ type SlotState = "empty" | "available" | "busy" | "maybe";
 type AvailabilityItem = {
   day: number | string;
   hour: number;
-  status: number;
+  statusId: number;
 };
 
 const stateStyles: Record<SlotState, string> = {
@@ -121,9 +121,9 @@ export default function SchedulePage() {
 
           let state: SlotState = "empty";
 
-          if (item.status === 0) state = "busy";
-          if (item.status === 1) state = "maybe";
-          if (item.status === 2) state = "available";
+          if (item.statusId === 1) state = "busy";
+          if (item.statusId === 2) state = "maybe";
+          if (item.statusId === 3) state = "available";
 
           loadedSlots[`${dayLabel}-${timeLabel}`] = state;
         });
@@ -205,10 +205,9 @@ export default function SchedulePage() {
           return {
             day: dayToNumber[dayLabel],
             hour: timeLabelToHour(timeLabel),
-            status: slotStateToStatus(state),
+            statusId: slotStateToStatus(state),
           };
         });
-
       await createWeeklyAvailability(userId, payload);
       setSuccessMessage("Availability saved.");
     } catch (error) {
@@ -423,8 +422,8 @@ function hourToLabel(hour: number) {
 }
 
 function slotStateToStatus(state: SlotState) {
-  if (state === "busy") return 0;
-  if (state === "maybe") return 1;
-  if (state === "available") return 2;
+  if (state === "busy") return 1;
+  if (state === "maybe") return 2;
+  if (state === "available") return 3;
   return 0;
 }

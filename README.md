@@ -23,6 +23,13 @@ Notes for rooms page when user enters a specific room:
 This API is still in development but now has funtionality towards most of our core features other than User's Availability!
     I will get Availability function operational before end of this week!
 
+9/18/2026 Daniel H: This fullstack app is fully operational based on working functions implemented at the academy with the addition of adding the host's availability within the rooms page for all members to view! Here are some features I would like to add towards this full stack web app
+
+Implement functionality for the host user to select the golden hour and display selected golden hour in dashboard and rooms page. 
+Fix availablility to be mapped better within Mobile versions.
+Within Friends page, fix list to exclude accepted friends/pending friends!
+Look into a way to implement notifications when golden hours are selected when user log in! (Websockets or Socket.Io)
+
 
 ## Hosted Link!
 https://venn-iota.vercel.app/

@@ -46,18 +46,18 @@ type RoomMember = {
   userModelId?: number;
   isAccepted?: boolean;
   memberId?: number;
-  memberInfo? : MemberInfo
+  memberInfo?: MemberInfo
 };
 
 type MemberInfo
-= {
-  username?: string;
-  email?: string;
-  userIcon?: string | null;
-  availability?: AvailabilityItem[];
-}
+  = {
+    username?: string;
+    email?: string;
+    userIcon?: string | null;
+    availability?: AvailabilityItem[];
+  }
 type HostData = {
-  userId: number,
+  id: number,
   username: string,
   description: string,
   userIcon: string,
@@ -77,6 +77,7 @@ export default function RoomDetailPage() {
   const [hostData, setHostData] = useState<HostData | null>(null)
   const [currentUserId, setCurrentUserId] = useState(0);
 
+  const [hostSlots, setHostSlots] = useState<Record<number, SlotState>>({})
   const [mySlots, setMySlots] = useState<Record<number, SlotState>>({});
   const [isSavingAvailability, setIsSavingAvailability] = useState(false);
 
@@ -134,7 +135,7 @@ export default function RoomDetailPage() {
   const myMember = useMemo(() => {
     return members.find(
       (member) =>
-        Number( member.memberId || 0) === Number(currentUserId)
+        Number(member.memberId || 0) === Number(currentUserId)
     );
   }, [members, currentUserId]);
 
@@ -154,6 +155,21 @@ export default function RoomDetailPage() {
     setMySlots(nextSlots);
   }, [myMember]);
 
+  useEffect(() => {
+    if (!hostData) return;
+    const nextSlots: Record<number, SlotState> = {};
+
+    timeSlots.forEach((hour) => {
+      nextSlots[hour] = "empty";
+    });
+
+    (hostData?.availability || []).forEach((slot) => {
+      nextSlots[slot.hour] = backendStatusToSlotState(slot.statusId);
+    });
+
+    setHostSlots(nextSlots);
+  }, [hostData])
+
   function formatDate(dateString?: string) {
     if (!dateString) return "No date set";
 
@@ -163,8 +179,6 @@ export default function RoomDetailPage() {
       month: "long",
       day: "numeric",
       year: "numeric",
-      // hour: "numeric",
-      // minute: "2-digit",
       timeZone: 'UTC'
     });
   }
@@ -186,6 +200,13 @@ export default function RoomDetailPage() {
       weekday: "long",
       timeZone: "UTC"
     });
+  }
+
+  const getHostStatusForHour = (hour: number) => {
+    if (hostId === currentUserId) {
+      return slotStateToBackendStatus(hostSlots[hour] || 'empty');
+    }
+    return hostData?.availability?.find((slot) => slot.hour === hour)?.statusId
   }
 
   function getStatusForHour(member: RoomMember, hour: number) {
@@ -213,6 +234,13 @@ export default function RoomDetailPage() {
 
   function handleMySlotClick(hour: number) {
     setMySlots((prev) => ({
+      ...prev,
+      [hour]: getNextSlotState(prev[hour] || "empty"),
+    }));
+  }
+
+  function handleHostSlotClick(hour: number) {
+    setHostSlots((prev) => ({
       ...prev,
       [hour]: getNextSlotState(prev[hour] || "empty"),
     }));
@@ -247,11 +275,11 @@ export default function RoomDetailPage() {
       );
 
       const updatedRoomDayAvailability = timeSlots
-        .filter((hour) => (mySlots[hour] || "empty") !== "empty")
+        .filter((hour) => (hostId !== currentUserId ? mySlots[hour] : hostSlots[hour] || "empty") !== "empty")
         .map((hour) => ({
           day: roomDayNumber,
           hour,
-          statusId: slotStateToBackendStatus(mySlots[hour] || "empty"),
+          statusId: slotStateToBackendStatus(hostId !== currentUserId ? mySlots[hour] : hostSlots[hour] || "empty"),
         }));
 
       const finalPayload = [
@@ -262,7 +290,6 @@ export default function RoomDetailPage() {
         })),
         ...updatedRoomDayAvailability,
       ];
-
       await createWeeklyAvailability(userId, finalPayload);
       setSuccessMessage("Your room availability was updated.");
       await loadRoomPage();
@@ -423,7 +450,7 @@ export default function RoomDetailPage() {
             </div>
 
             <div className="mt-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-              <div className="mb-4 flex items-center justify-between gap-4">
+              <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
                 <div>
                   <h2 className="text-xl font-semibold text-zinc-900">
                     Compare Availability
@@ -436,7 +463,7 @@ export default function RoomDetailPage() {
                     . Click your own time blocks to update them.
                   </p>
                 </div>
-
+                {/* {currentUserId !== hostData?.id && */}
                 <button
                   onClick={handleSaveMyAvailability}
                   disabled={isSavingAvailability}
@@ -445,6 +472,7 @@ export default function RoomDetailPage() {
                   <Save size={16} />
                   {isSavingAvailability ? "Saving..." : "Save My Availability"}
                 </button>
+                {/* } */}
               </div>
 
               <div className="mb-4 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
@@ -462,11 +490,11 @@ export default function RoomDetailPage() {
                     <div
                       className="grid border-b border-zinc-200 bg-white"
                       style={{
-                        gridTemplateColumns: `80px repeat(${members.length}, minmax(180px, 1fr))`,
+                        gridTemplateColumns: `80px repeat(${members.length + 1}, minmax(180px, 1fr))`,
                       }}
                     >
                       <div className="p-4" />
-                      {/* <div className="flex flex-col items-center gap-2 p-4">
+                      <div className="flex flex-col items-center gap-2 p-4">
                         <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-200">
                           {
                             hostData?.userIcon ? (
@@ -477,7 +505,7 @@ export default function RoomDetailPage() {
                           }
                         </div>
                         <p className="text-sm font-medium text-zinc-700">{hostData?.username}</p>
-                      </div> */}
+                      </div>
                       {members.map((member, index) => (
                         <div
                           key={member.memberId ?? member.userModelId ?? index}
@@ -506,21 +534,41 @@ export default function RoomDetailPage() {
                         key={hour}
                         className="grid border-b border-zinc-100"
                         style={{
-                          gridTemplateColumns: `80px repeat(${members.length}, minmax(180px, 1fr))`,
+                          gridTemplateColumns: `80px repeat(${members.length + 1}, minmax(180px, 1fr))`,
                         }}
                       >
                         <div className="p-4 text-sm font-medium text-zinc-700">
                           {formatHour(hour)}
                         </div>
-                        {/* {
+                        {
+                          // <div
+                          //   key={`${hostData?.id ?? 1}-${hour}`}
+                          //   className="p-2"
+                          // >
+                          //   <div
+                          //     className={`h-10 rounded-xl ${getStatusClass()}`} />
+                          // </div>
+                          // const status = getStatusForHour(member, hour);
                           <div
-                            key={`${hostData?.userId ?? 1}-${hour}`}
+                            key={`${hostData?.id ?? 1}-${hour}`}
                             className="p-2"
                           >
-                            <div
-                              className={`h-10 rounded-xl ${getStatusClass()}`} />
+                            {currentUserId === hostData?.id ? (
+                              <button
+                                type="button"
+                                onClick={() => handleHostSlotClick(hour)}
+                                className={`h-10 w-full rounded-xl transition hover:scale-[1.02] ${getStatusClass(
+                                  // hostData.availability?.[hour]?.statusId
+                                  getHostStatusForHour(hour)
+                                )}`}
+                              />
+                            ) : (
+                              <div
+                                className={`h-10 rounded-xl ${getStatusClass(hostData?.availability?.[hour]?.statusId)}`}
+                              />
+                            )}
                           </div>
-                        } */}
+                        }
                         {members.map((member, index) => {
                           const memberId = Number(
                             member.memberId || member.userModelId || 0
@@ -603,7 +651,7 @@ export default function RoomDetailPage() {
         />
       )}
 
-      <UpdateRoomModal  
+      <UpdateRoomModal
         isOpen={isUpdateOpen}
         onClose={() => setIsUpdateOpen(false)}
         roomModel={room!}

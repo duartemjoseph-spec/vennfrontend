@@ -37,3 +37,5 @@ https://venn-iota.vercel.app/
 ### Figma Link!
 https://www.figma.com/make/kz8Ceo6cvDNZFGNHHTGOss/Social-Scheduling-App-Prototype?p=f&t=2XjEYw2IrkaZMYpH-0
 
+Fix bug where user is unable to create a room.
+Add a feature to toggle from Am to Pm when viewing the rooms page!
